@@ -147,7 +147,7 @@ class PPO(PGPolicy):
             dist = self.dist_fn(logits)
         if self.training:
             try:
-                act = dist.sample()
+                act = dist.sample() # 根据概率进行多项式分布采样, replacement表示有无放回采样
             except:
                 print(logits)
                 act = dist.sample()
@@ -170,9 +170,9 @@ class PPO(PGPolicy):
             for b in batch.split(batch_size, shuffle=False):
                 v.append(self.critic(b.obs))
                 b_ = self(b)
-                dist = b_.dist
+                dist = b_.dist # action 的类别
                 logits = b_.logits
-                old_log_prob.append(dist.log_prob(to_torch_as(b.act, v[0])))
+                old_log_prob.append(dist.log_prob(to_torch_as(b.act, v[0]))) # 读的是collect里面sample的action的概率
                 old_logits.append(logits)
         if not self.teacher is None:
             with torch.no_grad():
@@ -184,7 +184,7 @@ class PPO(PGPolicy):
         batch.v = torch.cat(v, dim=0)  # old value
         batch.act = to_torch_as(batch.act, v[0])
         batch.logp_old = torch.cat(old_log_prob, dim=0)
-        batch.returns = to_torch_as(batch.returns, v[0]).reshape(batch.v.shape)
+        batch.returns = to_torch_as(batch.returns, v[0]).reshape(batch.v.shape) # sample的时候算好的
         if self._rew_norm:
             mean, std = batch.returns.mean(), batch.returns.std()
             if not np.isclose(std.item(), 0):
@@ -203,7 +203,7 @@ class PPO(PGPolicy):
                 # print(feature.pow(2).mean())
                 ratio = (dist.log_prob(b.act) - b.logp_old).exp().float()
                 surr1 = ratio * b.adv
-                surr2 = ratio.clamp(1.0 - self._eps_clip, 1.0 + self._eps_clip) * b.adv
+                surr2 = ratio.clamp(1.0 - self._eps_clip, 1.0 + self._eps_clip) * b.adv # clamp之后， 根据critic和actor预测的记过计算的sur会更小
                 if self._dual_clip:
                     clip_loss = -torch.max(torch.min(surr1, surr2), self._dual_clip * b.adv).mean()
                 else:
@@ -213,18 +213,19 @@ class PPO(PGPolicy):
                     v_clip = b.v + (value - b.v).clamp(-self._vf_clip_para, self._vf_clip_para)
                     vf1 = (b.returns - value).pow(2)
                     vf2 = (b.returns - v_clip).pow(2)
-                    vf_loss = torch.max(vf1, vf2).mean()
+                    vf_loss = torch.max(vf1, vf2).mean() # 依然用clip后的情况， 疑惑是是不是直接用vf2就好了
                 else:
                     vf_loss = (b.returns - value).pow(2).mean()
                 if not self.teacher is None:
                     supervision_loss = (b.old_feature - feature).pow(2).mean()
                     supervision_losses.append(supervision_loss.item())
-                kl = torch.distributions.kl.kl_divergence(self.dist_fn(b.old_logits), dist)
+                kl = torch.distributions.kl.kl_divergence(self.dist_fn(b.old_logits), dist)# sum(px * log(px / qx))
                 kl_loss = kl.mean()
                 kl_losses.append(kl_loss.item())
                 vf_losses.append(vf_loss.item())
-                e_loss = dist.entropy().mean()
+                e_loss = dist.entropy().mean() # -log(px) * px
                 ent_losses.append(e_loss.item())
+                # 1\ 优势损失 + value损失 + cross_entropy损失 + kl散度损失（权重自适应）
                 loss = clip_loss + self._w_vf * vf_loss - self._w_ent * e_loss + self.kl_coef * kl_loss
                 if self.teacher is not None:
                     loss += self.sup_coef * supervision_loss

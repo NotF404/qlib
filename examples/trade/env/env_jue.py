@@ -28,14 +28,14 @@ import action
 ZERO = 1e-7
 
 
-class StockEnv(gym.Env):
+class JueStockEnv(gym.Env):
     """Single-assert environment"""
 
     def __init__(self, config):
-        self.max_step_num = config["max_step_num"] # 总共多少分钟 237
+        self.max_step_num = config["max_step_num"]
         self.limit = config["limit"]
-        self.time_interval = config["time_interval"] # 多少分钟一次action 30
-        self.interval_num = config["interval_num"] # 总共会action那多少次 8
+        self.time_interval = config["time_interval"]
+        self.interval_num = config["interval_num"]
         self.offset = config["offset"] if "offset" in config else 0
         if "last_reward" in config:
             self.last_reward = config["last_reward"]
@@ -61,9 +61,17 @@ class StockEnv(gym.Env):
             self.reward_log_dict[name] = 0.0
         self.observation_space = self.obs.get_space()
         self.action_space = self.action_func.get_space()
+        self.max_action_seq = 5100
+        self.money_per_buy = 500000
 
     def toggle_log(self, log):
         self.log = log
+
+    def re_calc_raw_df(self, df: pd.DataFrame):
+        # "$vwap0", "$volume0"
+        df["$vwap0"] = df['amount'] / df['volume'] * 100.
+        df["$volume0"] = df['volume']
+        return df.drop(columns=['volume'])
 
     def reset(self, sample):
         """
@@ -78,29 +86,17 @@ class StockEnv(gym.Env):
             (
                 self.ins,
                 self.date,
-                self.raw_df_values,
-                self.raw_df_columns,
-                self.raw_df_index,
                 self.feature_dfs,
-                self.target,
                 self.is_buy,
             ) = sample
-        self.raw_df = pd.DataFrame(index=self.raw_df_index, data=self.raw_df_values, columns=self.raw_df_columns,)
-        del self.raw_df_values, self.raw_df_columns, self.raw_df_index
+
+        self.raw_df = self.re_calc_raw_df(self.feature_dfs[-1])
         start_time = time.time()
-        self.load_time = time.time() - start_time
-        self.day_vwap = nan_weighted_avg(
-            self.raw_df["$vwap0"].values[self.offset : self.offset + self.max_step_num],
-            self.raw_df["$volume0"].values[self.offset : self.offset + self.max_step_num],
-        )
-        try:
-            assert not (np.isnan(self.day_vwap) or np.isinf(self.day_vwap))
-        except:
-            print(self.raw_df)
-            print(self.ins)
-            print(self.day_vwap)
-            self.raw_df.to_pickle("/nfs_data1/kanren/error_df.pkl")
-        self.day_twap = np.nanmean(self.raw_df["$vwap0"].values[self.offset : self.offset + self.max_step_num])
+        # self.load_time = time.time() - start_time
+
+        open_price = self.raw_df.iloc[0].close
+        self.target = self.money_per_buy / open_price
+
         self.t = -1 + self.offset
         self.interval = 0
         self.position = self.target
@@ -117,6 +113,27 @@ class StockEnv(gym.Env):
             self.max_step_num,
             self.interval_num,
         )
+        if self.log:
+            self.traded_log = self.raw_df.copy(deep=True)
+            self.traded_log['trade_vol'] = np.nan
+            self.traded_log['action'] = np.nan
+            self.traded_log['deal_vol'] = np.nan
+        # v_t: The amount of shares the agent hope to trade
+        # max_vol_t: The max amount of shares can be traded
+        # traded_t: The amount of shares that is acually traded
+        # action: the action of agent, may have various meanings in different settings.
+        self.day_vwap = nan_weighted_avg(
+            self.raw_df["$vwap0"].values[self.offset : self.offset + self.max_step_num],
+            self.raw_df["$volume0"].values[self.offset : self.offset + self.max_step_num],
+        )
+        self.day_twap = np.nanmean(self.raw_df["$vwap0"].values[self.offset : self.offset + self.max_step_num])
+        try:
+            assert not (np.isnan(self.day_vwap) or np.isinf(self.day_vwap))
+        except:
+            print(self.raw_df)
+            print(self.ins)
+            print(self.day_vwap)
+            self.raw_df.to_pickle("/nfs_data1/kanren/error_df.pkl")
         if self.log:
             index_array = [
                 np.array([self.ins] * self.max_step_num),
@@ -135,19 +152,13 @@ class StockEnv(gym.Env):
                 },
                 index=index_array,
             )
-        # v_t: The amount of shares the agent hope to trade
-        # max_vol_t: The max amount of shares can be traded
-        # traded_t: The amount of shares that is acually traded
-        # action: the action of agent, may have various meanings in different settings.
         self.done = False
-        if self.limit > 1:
-            self.this_valid = np.inf
-        else:
-            self.this_valid = np.nansum(self.raw_df["$volume0"].values) * self.limit
+        self.this_valid = np.inf
+
         self.this_cash = 0
 
         self.step_time = []
-        self.action_log = [np.nan] * self.interval_num
+        self.action_log = [np.nan] * self.max_action_seq
         self.reset_time = time.time() - start_time
         self.real_eps_time = self.reset_time
         self.total_reward = 0
@@ -162,7 +173,7 @@ class StockEnv(gym.Env):
 
         """
         start_time = time.time()
-        self.action_log[self.interval] = action
+        self.action_log[self.interval + self.offset] = action
         volume_t = self.action_func(
             action,
             self.target,
@@ -321,7 +332,7 @@ class StockEnv(gym.Env):
             return self.state, reward, self.done, {}
 
 
-class StockEnv_Acc(StockEnv):
+class JueStockEnv_Acc(JueStockEnv):
     def step(self, action):
         start_time = time.time()
         self.action_log[self.interval] = action

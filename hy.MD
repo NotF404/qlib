@@ -1,0 +1,1 @@
+- [] 需要把数据resample成一样长， 这样batch也更加align一点， hist也可以这样试试

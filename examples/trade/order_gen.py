@@ -7,7 +7,7 @@ from joblib import Parallel, delayed
 
 data_path = '../data/'
 in_dir = os.path.join(data_path, 'backtest/')
-
+print(os.path.abspath(data_path))
 ### create order folders ####
 
 def generate_order(df, start, end):

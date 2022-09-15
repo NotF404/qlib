@@ -55,13 +55,13 @@ def run(config):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-c", "--config", type=str)
+    parser.add_argument("-c", "--config", type=str, default=None)
     parser.add_argument("-n", "--index", type=int, default=None)
     args = parser.parse_args()
 
     print(os.cpu_count())
 
-    EXP_PATH = os.environ["EXP_PATH"]
+    EXP_PATH = '/mnt/data/quant/qlib/'#os.environ["EXP_PATH"]
     config_path = os.path.normpath(os.path.join(EXP_PATH, args.config))
     EXP_NAME = os.path.relpath(config_path, EXP_PATH)
     if os.path.isdir(config_path):
@@ -133,3 +133,5 @@ if __name__ == "__main__":
         run(config)
     else:
         print("The config path should be a relative path from EXP_PATH")
+
+#EXP_PATH=/mnt/data/quant/qlib/work_dir python examples/trade/main.py --config=examples/trade/exp/example/OPDT/config.yml 

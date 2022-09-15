@@ -1,6 +1,7 @@
 #  Copyright (c) Microsoft Corporation.
 #  Licensed under the MIT License.
 
+import os
 import sys
 import fire
 from pathlib import Path
@@ -212,6 +213,7 @@ class HighfreqWorkflow(object):
 if __name__ == "__main__":
     #fire.Fire(HighfreqWorkflow)
     data_path = '../data/'
+    print(os.path.abspath(data_path))
     workflow = HighfreqWorkflow()
     workflow.get_high_freq_data(data_path)
 

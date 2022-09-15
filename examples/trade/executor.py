@@ -1,3 +1,6 @@
+# from examples.trade.vecenv import ShmemVectorEnv, SubprocVectorEnv
+import torch
+from collector import Collector
 import env
 from vecenv import *
 import sampler
@@ -12,7 +15,6 @@ import tianshou as ts
 import tqdm
 from tianshou.utils import tqdm_config, MovAvg
 from torch.utils.tensorboard import SummaryWriter
-from collector import *
 import numpy as np
 
 

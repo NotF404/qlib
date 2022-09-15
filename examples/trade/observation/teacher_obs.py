@@ -14,7 +14,9 @@ class TeacherObs(RuleObs):
     Consist of public state(raw feature), private state, seqlen
 
     """
-
+            # second_feat = second_data_df[['price', 'Vol', 'yclose', 'pos']].values.astype(np.double)
+            # mask = np.zeros((len(second_feat), 1))
+            # second_feat, mask = padding2len(second_feat, n_days * 5100), padding2len(mask, n_days * 5100, constant_values=1)
     def get_obs(
         self, raw_df, feature_dfs, t, interval, position, target, is_buy, max_step_num, interval_num, *args, **kargs,
     ):
