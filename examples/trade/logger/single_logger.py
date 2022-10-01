@@ -83,18 +83,12 @@ class DFLogger(object):
                 df = info.pop("df")
                 res = info.pop("res")
                 ins = df.index[0][0]
-                if ins not in df_cache:
-                    df_cache[ins] = (
-                        [],
-                        [],
-                        (pd.read_pickle(order_dir + ins + ".pkl.target")['amount'] != 0).sum(),
-                    )
-                df_cache[ins][0].append(df)
-                df_cache[ins][1].append(res)
-                if len(df_cache[ins][0]) == df_cache[ins][2]:
-                    pd.concat(df_cache[ins][0]).to_pickle(log_dir + ins + ".log")
-                    pd.concat(df_cache[ins][1]).to_pickle(log_dir + ins + ".pkl")
-                    del df_cache[ins]
+                date = df.index[0][1].date().strftime('%Y%m%d')
+
+                # print(os.path.join(log_dir, ins, str(date) + ".log"))
+                os.makedirs(os.path.join(log_dir, ins), exist_ok=True)
+                df.to_pickle(os.path.join(os.path.join(log_dir, ins, str(date) + ".pkl")))
+                res.to_pickle(os.path.join(os.path.join(log_dir, ins, str(date) + ".log")))
                 for k, v in info.items():
                     if k not in stat_cache:
                         stat_cache[k] = []

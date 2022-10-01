@@ -21,20 +21,26 @@ class TeacherObs(RuleObs):
         self, raw_df, feature_dfs, t, interval, position, target, is_buy, max_step_num, interval_num, *args, **kargs,
     ):
         if t == -1:
-            self.private_states = []
-        public_state = self.get_feature_res(feature_dfs, t, interval, whole_day=True)
-        private_state = np.array([position / target, (t + 1) / max_step_num])
-        self.private_states.append(private_state)
-        list_private_state = np.concatenate(self.private_states)
+            self._last_position = position / target
+            self.private_states = [[self._last_position, 0.]]
+            self.public_state = self.get_feature_res(feature_dfs, t, interval, whole_day=True)
+        else:
+            last_point = len(self.private_states)
+            step = (self._last_position - position / target) / (t - last_point + 2)
+            private_state = [[self._last_position - step * (t0 - last_point), (t0 + 1) / max_step_num] for t0 in range(last_point, t+2)]
+            self._last_position = position / target
+            self.private_states.extend(private_state)
+        # list_private_state = np.concatenate(self.private_states)
         list_private_state = np.concatenate(
-            (list_private_state, [0.0] * 2 * (interval_num + 1 - len(self.private_states)),)
+            (self.private_states, [[0.0, 0.0]] * (240 - len(self.private_states)),)
         )
-        seqlen = np.array([interval])
+        seqlen = np.array([240])
         assert not (
             np.isnan(list_private_state).any() | np.isinf(list_private_state).any()
         ), f"{private_state}, {target}"
-        assert not (np.isnan(public_state).any() | np.isinf(public_state).any()), f"{public_state}"
-        return np.concatenate((public_state, list_private_state, seqlen))
+        for k, p in self.public_state.items():
+            assert not (np.isnan(p).any() | np.isinf(p).any()), f"{p}"
+        return {"pub_state":self.public_state, "pri_state":list_private_state, "seqlen":seqlen}
 
 
 class RuleTeacher(RuleObs):

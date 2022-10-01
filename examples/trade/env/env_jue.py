@@ -20,10 +20,10 @@ from sklearn.metrics import roc_auc_score
 import sys
 
 sys.path.append("..")
-from util import merge_dicts, nan_weighted_avg, robust_auc
-import reward
-import observation
-import action
+from trade.util import merge_dicts, nan_weighted_avg, robust_auc
+from trade import reward
+from trade import observation
+from trade import action
 
 ZERO = 1e-7
 
@@ -56,21 +56,26 @@ class JueStockEnv(gym.Env):
         self.reward_log_dict = {}
         self.reward_coef = []
         for name, conf in config["reward"].items():
-            self.reward_coef.append(conf.pop("coefficient"))
+            self.reward_coef.append(conf["coefficient"])
             self.reward_func_list.append(getattr(reward, name)(conf))
             self.reward_log_dict[name] = 0.0
         self.observation_space = self.obs.get_space()
         self.action_space = self.action_func.get_space()
         self.max_action_seq = 5100
-        self.money_per_buy = 500000
+        self.money_per_buy = 5000000
 
     def toggle_log(self, log):
         self.log = log
 
     def re_calc_raw_df(self, df: pd.DataFrame):
         # "$vwap0", "$volume0"
-        df["$vwap0"] = df['amount'] / df['volume'] * 100.
-        df["$volume0"] = df['volume']
+        vwap0 = df['amount'] * 10000 / df['volume'] / 100.
+        vwap0[df['volume']==0] = np.nan
+        vwap0.fillna(method='ffill', inplace=True)
+        vwap0.fillna(method='bfill', inplace=True) # 
+        # df["$vwap0"] = (df['amount'] * 10000 + 1e-3) / (df['volume'] + 1e-3) / 100. #TODO: fix bug
+        df["$vwap0"] = vwap0
+        df["$volume0"] = df['volume'] * 100
         return df.drop(columns=['volume'])
 
     def reset(self, sample):
@@ -149,6 +154,7 @@ class JueStockEnv(gym.Env):
                     "$traded_t": np.nan,
                     "$vwap_t": self.raw_df["$vwap0"].values[self.offset : self.offset + self.max_step_num],
                     "action": np.nan,
+                    "$target": self.target,
                 },
                 index=index_array,
             )
@@ -238,12 +244,15 @@ class JueStockEnv(gym.Env):
             this_traded = self.target - self.position
             this_vwap = (self.this_cash / this_traded) if this_traded > ZERO else self.day_vwap
             valid = min(self.target, self.this_valid)
+            # ffr 真实卖出的比值
             this_ffr = (this_traded / valid) if valid > ZERO else 1.0
             if abs(this_ffr - 1.0) < ZERO:
                 this_ffr = 1.0
             this_ffr *= 100
+            # 卖出的平均价格/天平均价格
             this_vv_ratio = this_vwap / self.day_vwap
             vwap = self.raw_df["$vwap0"].values[self.offset : self.max_step_num + self.offset]
+            # 卖出的平均价格/天平均价格， 不加权的计算方法
             this_tt_ratio = this_vwap / np.nanmean(vwap)
 
             if self.is_buy:
@@ -379,7 +388,6 @@ class JueStockEnv_Acc(JueStockEnv):
         else:
             performance_raise = (this_vwap / self.day_vwap - 1) * 10000
             PA_t = (this_vwap / self.day_twap - 1) * 10000
-
         for i, reward_func in enumerate(self.reward_func_list):
             if reward_func.isinstant:
                 tmp_r = reward_func(performance_raise, v_t, self.target, PA_t)

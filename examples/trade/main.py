@@ -128,10 +128,11 @@ if __name__ == "__main__":
         with open(config_path, "r") as f:
             config = yaml.load(f, Loader=loader)
         config = get_full_config(config, os.path.dirname(config_path))
-        log_prefix = os.environ["OUTPUT_DIR"] if "OUTPUT_DIR" in os.environ else "../log"
-        config["log_dir"] = os.path.join(log_prefix, config["log_dir"])
+        # log_prefix = os.environ["OUTPUT_DIR"] if "OUTPUT_DIR" in os.environ else "../log"
+        # config["log_dir"] = os.path.join(log_prefix, config["log_dir"])
         run(config)
     else:
         print("The config path should be a relative path from EXP_PATH")
 
-#EXP_PATH=/mnt/data/quant/qlib/work_dir python examples/trade/main.py --config=examples/trade/exp/example/OPDT/config.yml 
+#python trade/main.py --config=/mnt/data/quant/qlib/examples/trade/exp/example/OPDT/config_jue.yml
+#python trade/main.py --config=/mnt/data/quant/qlib/examples/trade/exp/example/OPDT_b/config_jue_backtest.yml

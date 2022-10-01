@@ -1,6 +1,6 @@
 seed: 42
-task: train
-log_dir: /mnt/data/quant/qlib/examples/log/example/OPDT/
+task: eval
+log_dir: /mnt/data/quant/qlib/examples/log/example/OPDT_b/
 buffer_size: 80000
 train_start_date: "2018-09-18"
 train_end_date: "2021-06-30"
@@ -53,7 +53,7 @@ valid_paths:
 
 test_paths:
   raw_dir: /mnt/data/quant/qlib/data/backtest/
-  order_dir: /mnt/data/quant/qlib/data/order/test/
+  order_dir: /mnt/data/quant/qlib/data/order/all/
   train_start_date: "2018-09-18"
   train_end_date: "2021-06-30"
   valid_start_date: "2021-07-01"
@@ -120,3 +120,8 @@ optim:
   repeat_per_collect: 5
   early_stopping: 5
   weight_decay: 0.
+search:
+  optim.weight_decay:
+    type: choice
+    value: [0.]
+policy_path: /mnt/data/quant/qlib/examples/log/example/OPDT/policy_best

@@ -6,9 +6,9 @@ from copy import deepcopy
 import sys
 
 from tianshou.data import to_torch
+from .model import JueNet as Teacher_Extractor
 
-
-class Teacher_Extractor(nn.Module):
+class Teacher_Extractor_bak(nn.Module):
     def __init__(self, device="cpu", feature_size=180, **kargs):
         super().__init__()
         self.device = device
@@ -48,7 +48,7 @@ class Teacher_Actor(nn.Module):
     def __init__(self, extractor, out_shape, device=torch.device("cpu"), **kargs):
         super().__init__()
         self.extractor = extractor
-        self.layer_out = nn.Sequential(nn.Linear(32, out_shape), nn.Softmax(dim=-1))
+        self.layer_out = nn.Sequential(nn.Linear(128, out_shape), nn.Softmax(dim=-1))
         self.device = device
 
     def forward(self, obs, state=None, info={}):
@@ -61,7 +61,7 @@ class Teacher_Critic(nn.Module):
     def __init__(self, extractor, out_shape, device=torch.device("cpu"), **kargs):
         super().__init__()
         self.extractor = extractor
-        self.value_out = nn.Linear(32, 1)
+        self.value_out = nn.Linear(128, 1)
         self.device = device
 
     def forward(self, obs, state=None, info={}):

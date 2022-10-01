@@ -19,11 +19,11 @@ from sklearn.metrics import roc_auc_score
 
 import sys
 
-sys.path.append("..")
-from util import merge_dicts, nan_weighted_avg, robust_auc
-import reward
-import observation
-import action
+sys.path.append("/mnt/data/quant/qlib/examples")
+from trade.util import merge_dicts, nan_weighted_avg, robust_auc
+from trade import reward
+from trade import observation
+from trade import action
 
 ZERO = 1e-7
 

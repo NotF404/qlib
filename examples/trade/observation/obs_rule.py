@@ -41,6 +41,17 @@ class RuleObs(BaseObs):
     def __call__(self, *args, **kargs):
         return self.get_obs(*args, **kargs)
 
+    def _min_data_2_feature(self, df: pd.DataFrame, last_close: float):
+        """_summary_
+
+        Args:
+            df (pd.DataFrame): _description_
+        """
+        df['close'] = (df['close'] / last_close - 1.) * 10.
+        df['amount'] = np.log1p(df['amount']+1e-4) / 10. - 0.45
+        return df[['close', 'amount']].values[:240]
+
+
     def get_feature_res(self, df_list, time, interval, whole_day=False, interval_num=8):
         """
         This method would extract the needed feature from the feature dataframe based on the feature name
@@ -52,45 +63,11 @@ class RuleObs(BaseObs):
         :param whole_day: if True, this method would return the concatenate of all dataframe.(Default value = False)
 
         """
-        predictions = []
-        if whole_day:
-            try:
-                prediction = [df_list[i].reshape(-1) for i in range(len(df_list))]
-            except:
-                prediction = [df_list[i].reshape(-1) for i in range(len(df_list))]
-            for i, p in enumerate(prediction):
-                if len(p) < interval_num:
-                    prediction[i] = np.concatenate((p, np.zeros(interval_num - len(p))), axis=-1)
-            # res = np.stack(prediction).transpose().reshape(-1)
-            return np.concatenate(prediction)
-        for i in range(len(self.features)):
-            feature = self.features[i]
-            df = df_list[i]
-            size = feature["size"]
-            if feature["type"] == "inday":
-                if time == -1:
-                    predictions += [0.0] * size
-                else:
-                    predictions += df[size * time : size * (time + 1)].reshape(-1).tolist()
-            elif feature["type"] == "daily":
-                predictions += df.reshape(-1)[:size].tolist()
-            elif feature["type"] == "range":
-                if time == -1:
-                    predictions += [0.0] * size
-                else:
-                    predictions += df[time : size + time].reshape(-1).tolist()
-            elif feature["type"] == "interval":
-                if len(df[interval * size : (interval + 1) * size].reshape(-1)) == size:
-                    predictions += df[interval * size : (interval + 1) * size].reshape(-1).tolist()
-                else:
-                    predictions += [0.0] * size
-            elif feature["type"] == "step":
-                if len(df[size * (time + 1) : size * (time + 2)].reshape(-1)) == size:
-                    predictions += df[size * (time + 1) : size * (time + 2)].reshape(-1).tolist()
-                else:
-                    predictions += [0.0] * size
+        day_feat, day_label, min_df2, min_df1 = df_list
+        min_df1 = self._min_data_2_feature(min_df1, last_close=day_label.close1)
+        min_df2 = self._min_data_2_feature(min_df2, last_close=day_label.close2)
+        return {"day_feat":day_feat, "min_df1":min_df1, "min_df2":min_df2}
 
-        return np.array(predictions)
 
     def get_obs(self, raw_df, feature_dfs, t, interval, position, target, is_buy, *args, **kargs):
         private_state = np.array([position, target, t, self.max_step_num])

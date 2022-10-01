@@ -1,5 +1,6 @@
-from copyreg import pickle
+import pickle 
 import json
+import time
 import traceback
 import pandas as pd
 import numpy as np
@@ -9,6 +10,7 @@ from multiprocessing import Queue
 import os
 import sys
 from jue_data.data.history_kline_data import cache_day_feat_data
+
 sys.path.append("..")
 
 
@@ -89,6 +91,24 @@ def debug_save_df(code, date, n_days):
     min_data = load_n_days_replay(code, date, n_days)
     min_data.to_csv(f'{code}_s_{date}_{n_days}days.csv')
 
+def load_min_data(code, date, root):
+    fn = os.path.join(root, code, str(date)+'.pkl')
+    data = pickle.load(open(fn, 'rb'))
+    return data
+
+def load_n_day_min_data(code, date, root, stock_trade_dates, n_days=2):
+    dfs = []
+    if isinstance(date, pd.Timestamp):
+        date = date.strftime('%Y%m%d')
+    date_idx = int(stock_trade_dates[code]['k2i'][date])
+    for i, idx in enumerate(range(date_idx, date_idx-n_days, -1)):
+        if idx < 0: 
+            raise RuntimeError(date, code, n_days, '没有那么多数据')
+        date = stock_trade_dates[code]['i2k'][str(idx)]
+        df = load_min_data(code, date, root)#, self.root_replay
+        dfs.append(df)
+    return dfs[::-1]   
+    
 class JueSampler:
     """The sampler for training of single-assert RL."""
 
@@ -103,9 +123,9 @@ class JueSampler:
             config['instruments'],
             config["day_data_cache_dir"],
         )
-        self.second_dir = config["second_dir"] + "/"
+        self.min_data_dir = config["min_data_dir"]
         self.n_days = config['n_days']
-        self.second_dir = '/mnt/stockdata/eastmoney_replay_data1/'
+        self.stock_trade_dates = json.load(open(config['stock_trade_dates'], 'r'))
         self.day_df = pickle.load(open(os.path.join(self.day_dir, 'df_train.pkl'), 'rb')) 
         self.index = self.day_df.index.remove_unused_levels()
 
@@ -115,19 +135,19 @@ class JueSampler:
         self.order_df = None
 
     @staticmethod
-    def _worker(day_df, second_dir, index, n_days, queue):
+    def _worker(day_df, min_data_dir, index, n_days, stock_trade_dates, queue):
 
         while True:
             # print(ins)
             date, code = np.random.choice(index, 1)[0]
-            second_data_dfs = get_replay_data_batch(date, code, n_days)
+            min_data_dfs = load_n_day_min_data(code, date, min_data_dir, stock_trade_dates, n_days)
 
             day_feat = day_df.loc[(date, code), 'feature']
             day_label = day_df.loc[(date, code), 'label']
             # day_raw_df_index, day_raw_df_value, day_raw_df_column = toArray(second_data_dfs[-1])
             # 他需要用 raw_df 【vwap0， volume0】计算reward， volume0用来看最大能够卖出多少
             queue.put(
-                (code, date, [day_feat, day_label] + second_data_dfs, False,),
+                (code, date, [day_feat, day_label] + min_data_dfs, False,),
                 block=True,
             )
 
@@ -140,7 +160,7 @@ class JueSampler:
         if self.child is None:
             self.child = Process(
                 target=self._worker,
-                args=(self.day_df, self.second_dir, self.index, self.n_days, self.queue,),
+                args=(self.day_df, self.min_data_dir, self.index, self.n_days, self.stock_trade_dates, self.queue,),
                 daemon=True,
             )
             self.child.start()
@@ -165,21 +185,22 @@ class JueTestSampler(JueSampler):
     def __init__(self, config):
         super().__init__(config)
         self.ins_index = -1
+        self.day_df = pickle.load(open(os.path.join(self.day_dir, 'df_test.pkl'), 'rb')) 
+        self.index = self.day_df.index.remove_unused_levels()
 
     @staticmethod
-    def _worker(day_df, second_dir, index, n_days, queue):
+    def _worker(day_df, min_data_dir, index, n_days, stock_trade_dates, queue):
 
         for idx in index:
             # print(ins)
             date, code = idx
-            second_data_dfs = get_replay_data_batch(date, code, n_days)
+            min_data_dfs = load_n_day_min_data(code, date, min_data_dir, stock_trade_dates, n_days)
 
             day_feat = day_df.loc[(date, code), 'feature']
-
             day_label = day_df.loc[(date, code), 'label']
 
             queue.put(
-                (code, date, [day_feat, day_label] + second_data_dfs, False,),
+                (code, date, [day_feat, day_label] + min_data_dfs, False,),
                 block=True,
             )
         for _ in range(100):
@@ -197,7 +218,7 @@ class JueTestSampler(JueSampler):
                 self.queue.get()
         self.child = Process(
             target=self._worker,
-            args=(self.day_df, self.second_dir, self.index, self.n_days, self.queue,),
+            args=(self.day_df, self.min_data_dir, self.index, self.n_days, self.stock_trade_dates, self.queue,),
             daemon=True,
         )
         self.child.start()

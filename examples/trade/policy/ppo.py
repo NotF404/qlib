@@ -166,6 +166,7 @@ class PPO(PGPolicy):
         old_log_prob = []
         feature = []
         old_logits = []
+        torch.cuda.empty_cache()
         with torch.no_grad():
             for b in batch.split(batch_size, shuffle=False):
                 v.append(self.critic(b.obs))
@@ -194,6 +195,7 @@ class PPO(PGPolicy):
             mean, std = batch.adv.mean(), batch.adv.std()
             if not np.isclose(std.item(), 0):
                 batch.adv = (batch.adv - mean) / std
+        torch.cuda.empty_cache()
         for _ in range(repeat):
             for b in batch.split(batch_size):
                 dist = self(b).dist

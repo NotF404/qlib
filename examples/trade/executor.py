@@ -287,7 +287,7 @@ class Executor(BaseExecutor):
             if t.n <= t.total:
                 t.update()
             result = self.eval(
-                self.valid_paths["order_dir"], logdir=f"{self.log_dir}/valid/{iteration}/" if log_valid else None,
+                self.valid_paths["order_dir"], logdir=os.path.join(self.log_dir, "valid", iteration) if log_valid else None,
             )
             for k in result.keys():
                 self.writer.add_scalar("Valid/" + k, result[k], global_step=global_step)
@@ -309,7 +309,7 @@ class Executor(BaseExecutor):
                 break
         print("Testing...")
         self.policy.load_state_dict(best_state)
-        result = self.eval(self.test_paths["order_dir"], logdir=f"{self.log_dir}/test/", save_res=True)
+        result = self.eval(self.test_paths["order_dir"], logdir=os.path.join(self.log_dir, "test"), save_res=True)
         for k in result.keys():
             self.writer.add_scalar("Test/" + k, result[k], global_step=global_step)
         return result
@@ -334,7 +334,7 @@ class Executor(BaseExecutor):
         print(f"start evaluating on {order_dir}")
         self.policy.eval()
         self.env.toggle_log(True)
-        self.test_sampler.reset(order_dir)
+        self.test_sampler.reset()
         self.env.sampler = self.test_sampler
         self.test_collector.reset()
         if not logdir is None:
@@ -347,7 +347,7 @@ class Executor(BaseExecutor):
         result = self.test_collector.collect(log_fn=eval_logger)
         result = merge_dicts(result, eval_logger.summary())
         if save_res:
-            with open(self.log_dir + "/res.json", "w") as f:
+            with open(os.path.join(self.log_dir, "res.json"), "w") as f:
                 json.dump(result, f, sort_keys=True, indent=4)
         print(f"finish evaluating on {order_dir}")
         return result
