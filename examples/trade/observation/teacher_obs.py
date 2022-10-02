@@ -32,15 +32,17 @@ class TeacherObs(RuleObs):
             self.private_states.extend(private_state)
         # list_private_state = np.concatenate(self.private_states)
         list_private_state = np.concatenate(
-            (self.private_states, [[0.0, 0.0]] * (240 - len(self.private_states)),)
+            (self.private_states, [[0.0, 0.0]] * (self.max_step_num - len(self.private_states)),)
         )
-        seqlen = np.array([240])
+        mask = np.zeros_like(list_private_state) # 形状相等是巧合
+        mask[len(self.private_states)+1:, :] = 1
+        seqlen = np.array([len(self.private_states)])
         assert not (
             np.isnan(list_private_state).any() | np.isinf(list_private_state).any()
         ), f"{private_state}, {target}"
         for k, p in self.public_state.items():
             assert not (np.isnan(p).any() | np.isinf(p).any()), f"{p}"
-        return {"pub_state":self.public_state, "pri_state":list_private_state, "seqlen":seqlen}
+        return {"pub_state":self.public_state, "pri_state":list_private_state, "seqlen":seqlen, "tgt_mask": mask}
 
 
 class RuleTeacher(RuleObs):

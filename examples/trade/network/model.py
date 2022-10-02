@@ -46,7 +46,7 @@ class Transformer(nn.Module):
         return output.transpose(1, 0)
 
 class JueNet(nn.Module):
-    def __init__(self, d_feat_day=7, d_feat_min=2, d_model=128, nhead=4, num_layers=2, dropout=0.2, device='cuda:0', **kwargs):
+    def __init__(self, d_feat_day=7, d_feat_min=2, d_model=128, nhead=4, num_layers=2, dropout=0.2, device='cuda:0', perfect_info=True, max_min_seq_len=240, **kwargs):
         super(JueNet, self).__init__()
         # self.feature_layer = nn.Linear(d_feat, d_model)
         # self.pos_encoder = PositionalEncoding(d_model)
@@ -64,12 +64,16 @@ class JueNet(nn.Module):
         self.device = device
         self.d_feat_day = d_feat_day
         self.d_feat_min = d_feat_min
+        self.perfect_info = perfect_info
+        print(f"是否是完美信息:{self.perfect_info}")
+        self.nhead = nhead
+        self.max_min_seq_len = max_min_seq_len
 
         hidden_size = d_model
         self.position_ids_day = torch.arange(60).expand((1, -1)).cuda()
-        self.position_ids_min = torch.arange(240).expand((1, -1)).cuda()
+        self.position_ids_min = torch.arange(max_min_seq_len).expand((1, -1)).cuda()
         self.position_embeddings_day = nn.Embedding(60, hidden_size)
-        self.position_embeddings_min = nn.Embedding(240, hidden_size)
+        self.position_embeddings_min = nn.Embedding(max_min_seq_len, hidden_size)
 
 
         self.fc_day = nn.Linear(7, hidden_size)
@@ -95,15 +99,27 @@ class JueNet(nn.Module):
         min_df2 = inp['pub_state']["min_df2"]
         pri_state = inp['pri_state']
         # with torch.no_grad():
+        x_mask = None
+        if not self.perfect_info:
+            # df['close'] = (df['close'] / last_close - 1.) * 10.
+            # df['amount'] = np.log1p(df['amount']+1e-4) / 10. - 0.45
+            x_mask = torch.from_numpy(inp['tgt_mask']).to(self.device)
+            with torch.no_grad():
+                x_mask = x_mask[:, None, :, :].repeat((1, self.nhead, 1, 1))
+                x_mask = x_mask.reshape(-1, x_mask.shape[-2], x_mask.shape[-1])
+                x_mask = torch.bmm(x_mask, x_mask.transpose(-1, -2))
+            min_df1[inp['tgt_mask']==1] = 0. # 全部等于0算了, 本来是有意思的
+
+            # min_df1[:, seq_len+1:, 1] = - 0.85 # 
         day_feat = torch.from_numpy(day_feat).to(self.device).float()
         min_df1 = torch.from_numpy(min_df1).to(self.device).float()
         min_df2 = torch.from_numpy(min_df2).to(self.device).float()
         pri_state = torch.from_numpy(pri_state).to(self.device).float()
-        return day_feat, min_df1, min_df2, pri_state
+        return day_feat, min_df1, min_df2, pri_state, x_mask
 
     def forward(self, inp):
 
-        day_feat, min_df1, min_df2, pri_state = self.inp2tensor(inp)
+        day_feat, min_df1, min_df2, pri_state, mask = self.inp2tensor(inp)
         # src [N, F*T] --> [N, T, F]
         x_day = day_feat.reshape(len(day_feat), self.d_feat_day, -1) # [N, F, T]      
         x_day = x_day.permute(0, 2, 1) # [N, T, F]
@@ -126,7 +142,7 @@ class JueNet(nn.Module):
         x_dec = x_dec.transpose(1, 0)  # not batch first
 
         x_dec = self.fc_dec(x_dec)
-        x = self.transformer_decoder(x_dec, x_enc)
+        x = self.transformer_decoder(x_dec, x_enc, tgt_mask=mask)
 
 
         return x[-1, :, :]

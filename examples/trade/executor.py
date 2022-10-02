@@ -287,7 +287,7 @@ class Executor(BaseExecutor):
             if t.n <= t.total:
                 t.update()
             result = self.eval(
-                self.valid_paths["order_dir"], logdir=os.path.join(self.log_dir, "valid", iteration) if log_valid else None,
+                self.valid_paths["order_dir"], logdir=os.path.join(self.log_dir, "valid", str(iteration)) if log_valid else None,
             )
             for k in result.keys():
                 self.writer.add_scalar("Valid/" + k, result[k], global_step=global_step)

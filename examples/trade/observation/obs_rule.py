@@ -49,7 +49,7 @@ class RuleObs(BaseObs):
         """
         df['close'] = (df['close'] / last_close - 1.) * 10.
         df['amount'] = np.log1p(df['amount']+1e-4) / 10. - 0.45
-        return df[['close', 'amount']].values[:240]
+        return df[['close', 'amount']].values[:self.max_step_num]
 
 
     def get_feature_res(self, df_list, time, interval, whole_day=False, interval_num=8):
