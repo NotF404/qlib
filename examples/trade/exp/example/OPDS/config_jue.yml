@@ -112,7 +112,7 @@ network_conf:
     out_shape: 5
     fc_size: 128
     perfect_info: False
-    max_min_seq_len: 110
+    max_min_seq_len: 112
 optim:
   lr: 1e-4
   batch_size: 64

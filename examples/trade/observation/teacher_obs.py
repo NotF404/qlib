@@ -32,7 +32,7 @@ class TeacherObs(RuleObs):
             self.private_states.extend(private_state)
         # list_private_state = np.concatenate(self.private_states)
         list_private_state = np.concatenate(
-            (self.private_states, [[0.0, 0.0]] * (self.max_step_num - len(self.private_states)),)
+            (self.private_states, [[0.0, 0.0]] * (self.max_step_num + 2 - len(self.private_states)),)
         )
         mask = np.zeros_like(list_private_state) # 形状相等是巧合
         mask[len(self.private_states)+1:, :] = 1
