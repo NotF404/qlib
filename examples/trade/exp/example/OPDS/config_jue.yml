@@ -13,7 +13,6 @@ day_data_cache_dir: /mnt/data/quant/qlib/data/day_data_cache_dir/
 min_data_dir: /mnt/stockdata/eastmoney_min_data
 stock_trade_dates: /mnt/dev/HIST/stock_trade_date.json
 n_days: 2
-max_trade_min: 110
 io_conf:
   test_sampler: JueTestSampler
   train_sampler: JueSampler
@@ -69,7 +68,7 @@ test_paths:
 
 env_conf:
   name: JueStockEnv
-  max_step_num: ${max_trade_min}
+  max_step_num: 110
   limit: 10
   time_interval: 2
   interval_num: 55
@@ -113,7 +112,7 @@ network_conf:
     out_shape: 5
     fc_size: 128
     perfect_info: False
-    max_min_seq_len: ${max_trade_min}
+    max_min_seq_len: 110
 optim:
   lr: 1e-4
   batch_size: 64
