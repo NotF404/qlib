@@ -1,6 +1,6 @@
 seed: 42
 task: train
-log_dir: /mnt/data/quant/qlib/examples/log/example/OPDS_1/
+log_dir: /mnt/data/quant/qlib/examples/log/example/OPDS_2/
 buffer_size: 80000
 train_start_date: "2018-09-18"
 train_end_date: "2021-06-30"
@@ -107,7 +107,7 @@ network_conf:
     d_feat_min: 2
     d_model: 128
     nhead: 4
-    num_layers: 2
+    num_layers: 4
     dropout: 0.2
     out_shape: 5
     fc_size: 128
@@ -115,10 +115,10 @@ network_conf:
     max_min_seq_len: 112
 optim:
   lr: 1e-4
-  batch_size: 64
+  batch_size: 128
   max_epoch: 30
-  step_per_epoch: 10
-  collect_per_step: 10000
+  step_per_epoch: 3
+  collect_per_step: 40000
   repeat_per_collect: 5
-  early_stopping: 5
+  early_stopping: 10
   weight_decay: 0.
