@@ -222,3 +222,29 @@ class JueTestSampler(JueSampler):
             daemon=True,
         )
         self.child.start()
+
+class JueInferSampler(JueSampler):
+    """The sampler for backtest of single-assert strategies."""
+
+    def __init__(self, config, dataset):
+        super().__init__(config)
+        self.ins_index = -1
+        self.day_df = pickle.load(open(os.path.join(self.day_dir, f'df_{dataset}.pkl'), 'rb')) 
+        self.index = self.day_df.index.remove_unused_levels()
+
+    def sample(self, date, code):
+
+        min_data_dfs = load_n_day_min_data(code, date, self.min_data_dir, self.stock_trade_dates, self.n_days)
+
+        day_feat = self.day_df.loc[(date, code), 'feature']
+        day_label = self.day_df.loc[(date, code), 'label']
+
+        return code, date, [day_feat, day_label] + min_data_dfs, False
+
+
+    def reset(self):
+        pass
+    
+    def stop(self):
+        pass
+

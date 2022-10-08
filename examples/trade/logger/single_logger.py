@@ -1,9 +1,21 @@
+from datetime import datetime
+import json
 import pandas as pd
 import numpy as np
 import os
 from multiprocessing import Queue, Process
 import time
 
+class NpEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        else:
+            return super(NpEncoder, self).default(obj)
 
 def GLR(values):
     """
@@ -75,6 +87,9 @@ class DFLogger(object):
                     summary["GLR_buy"] = GLR(stat_cache["PA_buy"])
                 except:
                     pass
+                # json.dump(stat_cache, 
+                #         open(os.path.join(log_dir, f'infer_{datetime.now().isoformat()}.log'), 'w'), 
+                #         indent=2, cls=NpEncoder)
                 queue.put(summary)
                 break
             elif len(info) == 0:

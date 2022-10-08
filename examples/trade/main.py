@@ -134,6 +134,6 @@ if __name__ == "__main__":
     else:
         print("The config path should be a relative path from EXP_PATH")
 
-#python trade/main.py --config=/mnt/data/quant/qlib/examples/trade/exp/example/OPDT/config_jue.yml
-#python trade/main.py --config=/mnt/data/quant/qlib/examples/trade/exp/example/OPDT_b/config_jue_backtest.yml
-#nohup python trade/main.py --config=/mnt/data/quant/qlib/examples/trade/exp/example/OPDS/config_jue.yml >log 2>1& &
+#python trade/main.py --config=/mnt/data/quant/qlib/examples/trade/exp/example/OPDS/config_jue.yml
+#python trade/main.py --config=/mnt/data/quant/qlib/examples/trade/exp/example/OPDS/config_jue.yml
+#nohup python trade/main.py --config=/mnt/data/quant/qlib/examples/trade/exp/example/OPDS/config_jue.yml >log_opds_3 2>&1 &

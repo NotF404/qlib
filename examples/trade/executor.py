@@ -1,4 +1,5 @@
 # from examples.trade.vecenv import ShmemVectorEnv, SubprocVectorEnv
+from datetime import datetime
 import torch
 from collector import Collector
 import env
@@ -300,6 +301,8 @@ class Executor(BaseExecutor):
             elif global_step >= train_step_min:
                 early_stop_round += 1
             torch.save(self.policy, f"{self.log_dir}/policy_{epoch}")
+            # 防止模式崩塌越来越远， 每次从best开始
+            self.policy.load_state_dict(best_state)
             print(
                 f'Epoch #{epoch}: test_reward: {result["rew"]:.4f}, '  # train_reward: {result_train["rew"]:.4f}, '
                 f"best_reward: {best_reward:.4f} in #{best_epoch}"
@@ -347,7 +350,7 @@ class Executor(BaseExecutor):
         result = self.test_collector.collect(log_fn=eval_logger)
         result = merge_dicts(result, eval_logger.summary())
         if save_res:
-            with open(os.path.join(self.log_dir, "res.json"), "w") as f:
+            with open(os.path.join(self.log_dir, f"res_{datetime.now().isoformat()}.json"), "w") as f:
                 json.dump(result, f, sort_keys=True, indent=4)
         print(f"finish evaluating on {order_dir}")
         return result

@@ -61,7 +61,7 @@ class JueStockEnv(gym.Env):
             self.reward_log_dict[name] = 0.0
         self.observation_space = self.obs.get_space()
         self.action_space = self.action_func.get_space()
-        self.max_action_seq = 5100
+        self.max_action_seq = 112
         self.money_per_buy = 5000000
 
     def toggle_log(self, log):
@@ -288,6 +288,10 @@ class JueStockEnv(gym.Env):
                         "vwap": this_vwap,
                         "this_vv_ratio": this_vv_ratio,
                         "this_ffr": this_ffr,
+                        "reward": reward,
+                        "PR": performance_raise,
+                        'day_vwap': self.day_vwap
+
                     },
                     index=[[self.ins], [self.date]],
                 )

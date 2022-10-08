@@ -32,6 +32,6 @@ class VP_Penalty_small_vec(VP_Penalty_small):
         """
         assert target > 0
         reward = performance_raise * v_t.sum() / target
-        reward -= self.penalty * ((v_t / target) ** 2).sum()# TODO: 不知道有无必要， 我想卖得越早越好(这个值很小， 影响还需要确认)
+        # reward -= self.penalty * ((v_t / target) ** 2).sum()# TODO: 不知道有无必要， 我想卖得越早越好(这个值很小， 影响还需要确认)
         assert not (np.isnan(reward) or np.isinf(reward)), f"{performance_raise}, {v_t}, {target}"
         return reward / 100
