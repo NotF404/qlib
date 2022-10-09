@@ -136,4 +136,4 @@ if __name__ == "__main__":
 
 #python trade/main.py --config=/mnt/data/quant/qlib/examples/trade/exp/example/OPDS/config_jue.yml
 #python trade/main.py --config=/mnt/data/quant/qlib/examples/trade/exp/example/OPDS/config_jue.yml
-#nohup python trade/main.py --config=/mnt/data/quant/qlib/examples/trade/exp/example/OPDS/config_jue.yml >log_opds_3 2>&1 &
+#nohup python trade/main.py --config=/mnt/data/quant/qlib/examples/trade/exp/example/OPDS/config_jue.yml >log_opds_4.log 2>&1 &

@@ -1,6 +1,6 @@
 seed: 42
 task: train
-log_dir: /mnt/data/quant/qlib/examples/log/example/OPDS_3/
+log_dir: /mnt/data/quant/qlib/examples/log/example/OPDS_4/
 buffer_size: 80000
 train_start_date: "2018-09-18"
 train_end_date: "2021-06-30"

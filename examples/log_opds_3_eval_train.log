@@ -1,0 +1,11 @@
+nohup: 忽略输入
+[6660:MainThread](2022-10-08 22:17:47,705) INFO - qlib.Initialization - [config.py:413] - default_conf: client.
+[6660:MainThread](2022-10-08 22:17:48,073) INFO - qlib.Initialization - [__init__.py:74] - qlib successfully initialized based on client settings.
+[6660:MainThread](2022-10-08 22:17:48,074) INFO - qlib.Initialization - [__init__.py:76] - data_path={'__DEFAULT_FREQ': PosixPath('/home/hy/.qlib/qlib_data/my_data')}
+12
+/mnt/data/quant/qlib/examples/log/example/OPDS_3/
+the best GPU is  0  with free memories of  24249 
+CPU_COUNT: 24
+已经有cache的数据dcf73706dd05ce93e3c57571142ab1aa!!!!
+已经有cache的数据dcf73706dd05ce93e3c57571142ab1aa!!!!
+start evaluating on /mnt/data/quant/qlib/data/order/test/
