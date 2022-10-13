@@ -1,5 +1,6 @@
 seed: 42
-task: train
+task: eval
+policy_path: /mnt/data/quant/qlib/examples/log/example/OPDS_4/policy_best
 log_dir: /mnt/data/quant/qlib/examples/log/example/OPDS_4/
 buffer_size: 80000
 train_start_date: "2018-09-18"

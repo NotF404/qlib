@@ -10,7 +10,7 @@ from multiprocessing import Queue
 import os
 import sys
 from jue_data.data.history_kline_data import cache_day_feat_data
-
+from jue_data.data.history_min_data import load_n_day_min_data
 sys.path.append("..")
 
 
@@ -35,79 +35,6 @@ def toArray(data):
         except:
             raise NotImplementedError
 
-
-def load_pickle_data(date, code, root):
-    fn = os.path.join(root, code, str(date)+'.pkl')
-    try:
-        data = pickle.load(open(fn, 'rb'))
-        # print(data.shape)
-    except:
-        with open('miss_data.txt', 'a') as f:
-            s = f'{code}_{date}\n'
-            f.write(s)
-        print(s)
-        traceback.print_exc()
-    return data
-
-def preprocess_order_book_data(df):
-    df.drop(labels=['a5', 'a4', 'a3', 'a2', 'a1', 'b1', 'b2', 'b3', 'b4', 'b5'], axis=1, inplace=True)
-    if 'code' in df.index.names: 
-        df = df.droplevel(0)
-    df['price'][df['price']<-10.] = 0.
-    df['Vol'] = df['Vol']/3.75
-    return df
-
-def get_history_orderbook_data(code, date):
-    df = load_pickle_data(date, code, '/mnt/stockdata/eastmoney_replay_data1/')
-    df = preprocess_order_book_data(df)
-    return df
-
-def load_n_days_replay(code, date, stock_trade_dates, n=2):
-    dfs = []
-    date_idx = int(stock_trade_dates[code]['k2i'][date])
-    for i, idx in enumerate(range(date_idx, date_idx-n, -1)):
-        if idx < 0: 
-            print(date, code, n, '没有那么多数据')
-            break
-        date = stock_trade_dates[code]['i2k'][str(idx)]
-        # df = load_min_data(date, code, self.root_replay)
-        df = get_history_orderbook_data(code, date)#, self.root_replay
-        dfs.append(df)
-    return dfs[::-1]
-
-def padding2len(array, len, constant_values=0):
-    data_len = array.shape[0]
-    if data_len >= len:
-        return array[:len, :]
-    else:
-        return np.pad(array, ((len-data_len, 0), (0, 0)), constant_values=constant_values)
-
-def get_replay_data_batch(date, code, n_days):
-    date = date.date().isoformat().replace('-', '')
-    dfs = load_n_days_replay(code, date)
-    return dfs
-
-def debug_save_df(code, date, n_days):
-    min_data = load_n_days_replay(code, date, n_days)
-    min_data.to_csv(f'{code}_s_{date}_{n_days}days.csv')
-
-def load_min_data(code, date, root):
-    fn = os.path.join(root, code, str(date)+'.pkl')
-    data = pickle.load(open(fn, 'rb'))
-    return data
-
-def load_n_day_min_data(code, date, root, stock_trade_dates, n_days=2):
-    dfs = []
-    if isinstance(date, pd.Timestamp):
-        date = date.strftime('%Y%m%d')
-    date_idx = int(stock_trade_dates[code]['k2i'][date])
-    for i, idx in enumerate(range(date_idx, date_idx-n_days, -1)):
-        if idx < 0: 
-            raise RuntimeError(date, code, n_days, '没有那么多数据')
-        date = stock_trade_dates[code]['i2k'][str(idx)]
-        df = load_min_data(code, date, root)#, self.root_replay
-        dfs.append(df)
-    return dfs[::-1]   
     
 class JueSampler:
     """The sampler for training of single-assert RL."""

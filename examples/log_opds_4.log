@@ -16,100 +16,222 @@ CPU_COUNT: 24
 [9269:MainThread](2022-10-08 23:04:25,859) INFO - qlib.timer - [log.py:117] - Time cost: 0.996s | fit & process data Done
 [9269:MainThread](2022-10-08 23:04:25,859) INFO - qlib.timer - [log.py:117] - Time cost: 280.554s | Init data Done
 已经有cache的数据8020603e762d09ce23eec838cd8bc679!!!!
-Epoch #1:   0%|          | 0/3 [00:00<?, ?it/s]Epoch #1:  33%|###3      | 1/3 [13:37<27:15, 817.72s/it]Epoch #1:  67%|######6   | 2/3 [27:16<13:38, 818.31s/it]Epoch #1: 100%|##########| 3/3 [40:56<00:00, 818.93s/it]Epoch #1: 100%|##########| 3/3 [40:56<00:00, 818.70s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
+
+Epoch #1:   0%|          | 0/3 [00:00<?, ?it/s]
+Epoch #1:  33%|###3      | 1/3 [13:37<27:15, 817.72s/it]
+Epoch #1:  67%|######6   | 2/3 [27:16<13:38, 818.31s/it]
+Epoch #1: 100%|##########| 3/3 [40:56<00:00, 818.93s/it]
+Epoch #1: 100%|##########| 3/3 [40:56<00:00, 818.70s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
 
 finish evaluating on /mnt/data/quant/qlib/data/order/valid/
 Epoch #1: test_reward: 0.2708, best_reward: 0.2708 in #1
-Epoch #2:   0%|          | 0/3 [00:00<?, ?it/s]Epoch #2:  33%|###3      | 1/3 [13:37<27:15, 817.63s/it]Epoch #2:  67%|######6   | 2/3 [27:12<13:36, 816.07s/it]Epoch #2: 100%|##########| 3/3 [40:47<00:00, 815.48s/it]Epoch #2: 100%|##########| 3/3 [40:47<00:00, 815.80s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
+
+Epoch #2:   0%|          | 0/3 [00:00<?, ?it/s]
+Epoch #2:  33%|###3      | 1/3 [13:37<27:15, 817.63s/it]
+Epoch #2:  67%|######6   | 2/3 [27:12<13:36, 816.07s/it]
+Epoch #2: 100%|##########| 3/3 [40:47<00:00, 815.48s/it]
+Epoch #2: 100%|##########| 3/3 [40:47<00:00, 815.80s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
 
 finish evaluating on /mnt/data/quant/qlib/data/order/valid/
 Epoch #2: test_reward: 0.4168, best_reward: 0.4168 in #2
-Epoch #3:   0%|          | 0/3 [00:00<?, ?it/s]Epoch #3:  33%|###3      | 1/3 [13:32<27:05, 812.87s/it]Epoch #3:  67%|######6   | 2/3 [27:04<13:32, 812.21s/it]Epoch #3: 100%|##########| 3/3 [40:36<00:00, 812.06s/it]Epoch #3: 100%|##########| 3/3 [40:36<00:00, 812.17s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
+
+Epoch #3:   0%|          | 0/3 [00:00<?, ?it/s]
+Epoch #3:  33%|###3      | 1/3 [13:32<27:05, 812.87s/it]
+Epoch #3:  67%|######6   | 2/3 [27:04<13:32, 812.21s/it]
+Epoch #3: 100%|##########| 3/3 [40:36<00:00, 812.06s/it]
+Epoch #3: 100%|##########| 3/3 [40:36<00:00, 812.17s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
 
 finish evaluating on /mnt/data/quant/qlib/data/order/valid/
 Epoch #3: test_reward: 0.4993, best_reward: 0.4993 in #3
-Epoch #4:   0%|          | 0/3 [00:00<?, ?it/s]Epoch #4:  33%|###3      | 1/3 [13:36<27:13, 816.94s/it]Epoch #4:  67%|######6   | 2/3 [27:14<13:37, 817.44s/it]Epoch #4: 100%|##########| 3/3 [40:49<00:00, 816.20s/it]Epoch #4: 100%|##########| 3/3 [40:49<00:00, 816.48s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
+
+Epoch #4:   0%|          | 0/3 [00:00<?, ?it/s]
+Epoch #4:  33%|###3      | 1/3 [13:36<27:13, 816.94s/it]
+Epoch #4:  67%|######6   | 2/3 [27:14<13:37, 817.44s/it]
+Epoch #4: 100%|##########| 3/3 [40:49<00:00, 816.20s/it]
+Epoch #4: 100%|##########| 3/3 [40:49<00:00, 816.48s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
 
 finish evaluating on /mnt/data/quant/qlib/data/order/valid/
 Epoch #4: test_reward: 0.5334, best_reward: 0.5334 in #4
-Epoch #5:   0%|          | 0/3 [00:00<?, ?it/s]Epoch #5:  33%|###3      | 1/3 [13:40<27:21, 820.92s/it]Epoch #5:  67%|######6   | 2/3 [27:25<13:43, 823.25s/it]Epoch #5: 100%|##########| 3/3 [41:11<00:00, 824.41s/it]Epoch #5: 100%|##########| 3/3 [41:11<00:00, 823.86s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
+
+Epoch #5:   0%|          | 0/3 [00:00<?, ?it/s]
+Epoch #5:  33%|###3      | 1/3 [13:40<27:21, 820.92s/it]
+Epoch #5:  67%|######6   | 2/3 [27:25<13:43, 823.25s/it]
+Epoch #5: 100%|##########| 3/3 [41:11<00:00, 824.41s/it]
+Epoch #5: 100%|##########| 3/3 [41:11<00:00, 823.86s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
 
 finish evaluating on /mnt/data/quant/qlib/data/order/valid/
 Epoch #5: test_reward: 0.5690, best_reward: 0.5690 in #5
-Epoch #6:   0%|          | 0/3 [00:00<?, ?it/s]Epoch #6:  33%|###3      | 1/3 [13:42<27:24, 822.31s/it]Epoch #6:  67%|######6   | 2/3 [27:21<13:40, 820.41s/it]Epoch #6: 100%|##########| 3/3 [40:58<00:00, 819.02s/it]Epoch #6: 100%|##########| 3/3 [40:58<00:00, 819.58s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
+
+Epoch #6:   0%|          | 0/3 [00:00<?, ?it/s]
+Epoch #6:  33%|###3      | 1/3 [13:42<27:24, 822.31s/it]
+Epoch #6:  67%|######6   | 2/3 [27:21<13:40, 820.41s/it]
+Epoch #6: 100%|##########| 3/3 [40:58<00:00, 819.02s/it]
+Epoch #6: 100%|##########| 3/3 [40:58<00:00, 819.58s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
 
 finish evaluating on /mnt/data/quant/qlib/data/order/valid/
 Epoch #6: test_reward: 0.5562, best_reward: 0.5690 in #5
-Epoch #7:   0%|          | 0/3 [00:00<?, ?it/s]Epoch #7:  33%|###3      | 1/3 [13:30<27:01, 810.90s/it]Epoch #7:  67%|######6   | 2/3 [27:09<13:35, 815.19s/it]Epoch #7: 100%|##########| 3/3 [40:47<00:00, 816.48s/it]Epoch #7: 100%|##########| 3/3 [40:47<00:00, 815.70s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
+
+Epoch #7:   0%|          | 0/3 [00:00<?, ?it/s]
+Epoch #7:  33%|###3      | 1/3 [13:30<27:01, 810.90s/it]
+Epoch #7:  67%|######6   | 2/3 [27:09<13:35, 815.19s/it]
+Epoch #7: 100%|##########| 3/3 [40:47<00:00, 816.48s/it]
+Epoch #7: 100%|##########| 3/3 [40:47<00:00, 815.70s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
 
 finish evaluating on /mnt/data/quant/qlib/data/order/valid/
 Epoch #7: test_reward: 0.5721, best_reward: 0.5721 in #7
-Epoch #8:   0%|          | 0/3 [00:00<?, ?it/s]Epoch #8:  33%|###3      | 1/3 [13:33<27:07, 813.81s/it]Epoch #8:  67%|######6   | 2/3 [27:13<13:37, 817.50s/it]Epoch #8: 100%|##########| 3/3 [40:54<00:00, 819.00s/it]Epoch #8: 100%|##########| 3/3 [40:54<00:00, 818.23s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
+
+Epoch #8:   0%|          | 0/3 [00:00<?, ?it/s]
+Epoch #8:  33%|###3      | 1/3 [13:33<27:07, 813.81s/it]
+Epoch #8:  67%|######6   | 2/3 [27:13<13:37, 817.50s/it]
+Epoch #8: 100%|##########| 3/3 [40:54<00:00, 819.00s/it]
+Epoch #8: 100%|##########| 3/3 [40:54<00:00, 818.23s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
 
 finish evaluating on /mnt/data/quant/qlib/data/order/valid/
 Epoch #8: test_reward: 0.5935, best_reward: 0.5935 in #8
-Epoch #9:   0%|          | 0/3 [00:00<?, ?it/s]Epoch #9:  33%|###3      | 1/3 [13:41<27:23, 821.50s/it]Epoch #9:  67%|######6   | 2/3 [27:29<13:45, 825.27s/it]Epoch #9: 100%|##########| 3/3 [41:16<00:00, 826.10s/it]Epoch #9: 100%|##########| 3/3 [41:16<00:00, 825.50s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
+
+Epoch #9:   0%|          | 0/3 [00:00<?, ?it/s]
+Epoch #9:  33%|###3      | 1/3 [13:41<27:23, 821.50s/it]
+Epoch #9:  67%|######6   | 2/3 [27:29<13:45, 825.27s/it]
+Epoch #9: 100%|##########| 3/3 [41:16<00:00, 826.10s/it]
+Epoch #9: 100%|##########| 3/3 [41:16<00:00, 825.50s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
 
 finish evaluating on /mnt/data/quant/qlib/data/order/valid/
 Epoch #9: test_reward: 0.6110, best_reward: 0.6110 in #9
-Epoch #10:   0%|          | 0/3 [00:00<?, ?it/s]Epoch #10:  33%|###3      | 1/3 [13:50<27:40, 830.39s/it]Epoch #10:  67%|######6   | 2/3 [27:36<13:47, 827.71s/it]Epoch #10: 100%|##########| 3/3 [41:26<00:00, 829.05s/it]Epoch #10: 100%|##########| 3/3 [41:26<00:00, 828.96s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
+
+Epoch #10:   0%|          | 0/3 [00:00<?, ?it/s]
+Epoch #10:  33%|###3      | 1/3 [13:50<27:40, 830.39s/it]
+Epoch #10:  67%|######6   | 2/3 [27:36<13:47, 827.71s/it]
+Epoch #10: 100%|##########| 3/3 [41:26<00:00, 829.05s/it]
+Epoch #10: 100%|##########| 3/3 [41:26<00:00, 828.96s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
 
 finish evaluating on /mnt/data/quant/qlib/data/order/valid/
 Epoch #10: test_reward: 0.6477, best_reward: 0.6477 in #10
-Epoch #11:   0%|          | 0/3 [00:00<?, ?it/s]Epoch #11:  33%|###3      | 1/3 [14:06<28:13, 846.72s/it]Epoch #11:  67%|######6   | 2/3 [28:20<14:10, 850.65s/it]Epoch #11: 100%|##########| 3/3 [42:43<00:00, 856.66s/it]Epoch #11: 100%|##########| 3/3 [42:43<00:00, 854.65s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
+
+Epoch #11:   0%|          | 0/3 [00:00<?, ?it/s]
+Epoch #11:  33%|###3      | 1/3 [14:06<28:13, 846.72s/it]
+Epoch #11:  67%|######6   | 2/3 [28:20<14:10, 850.65s/it]
+Epoch #11: 100%|##########| 3/3 [42:43<00:00, 856.66s/it]
+Epoch #11: 100%|##########| 3/3 [42:43<00:00, 854.65s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
 
 finish evaluating on /mnt/data/quant/qlib/data/order/valid/
 Epoch #11: test_reward: 0.6746, best_reward: 0.6746 in #11
-Epoch #12:   0%|          | 0/3 [00:00<?, ?it/s]Epoch #12:  33%|###3      | 1/3 [14:31<29:02, 871.25s/it]Epoch #12:  67%|######6   | 2/3 [29:07<14:34, 874.47s/it]Epoch #12: 100%|##########| 3/3 [43:49<00:00, 877.88s/it]Epoch #12: 100%|##########| 3/3 [43:49<00:00, 876.64s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
+
+Epoch #12:   0%|          | 0/3 [00:00<?, ?it/s]
+Epoch #12:  33%|###3      | 1/3 [14:31<29:02, 871.25s/it]
+Epoch #12:  67%|######6   | 2/3 [29:07<14:34, 874.47s/it]
+Epoch #12: 100%|##########| 3/3 [43:49<00:00, 877.88s/it]
+Epoch #12: 100%|##########| 3/3 [43:49<00:00, 876.64s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
 
 finish evaluating on /mnt/data/quant/qlib/data/order/valid/
 Epoch #12: test_reward: 0.6732, best_reward: 0.6746 in #11
-Epoch #13:   0%|          | 0/3 [00:00<?, ?it/s]Epoch #13:  33%|###3      | 1/3 [14:46<29:32, 886.17s/it]Epoch #13:  67%|######6   | 2/3 [29:30<14:45, 885.19s/it]Epoch #13: 100%|##########| 3/3 [44:09<00:00, 882.27s/it]Epoch #13: 100%|##########| 3/3 [44:09<00:00, 883.15s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
+
+Epoch #13:   0%|          | 0/3 [00:00<?, ?it/s]
+Epoch #13:  33%|###3      | 1/3 [14:46<29:32, 886.17s/it]
+Epoch #13:  67%|######6   | 2/3 [29:30<14:45, 885.19s/it]
+Epoch #13: 100%|##########| 3/3 [44:09<00:00, 882.27s/it]
+Epoch #13: 100%|##########| 3/3 [44:09<00:00, 883.15s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
 
 finish evaluating on /mnt/data/quant/qlib/data/order/valid/
 Epoch #13: test_reward: 0.6804, best_reward: 0.6804 in #13
-Epoch #14:   0%|          | 0/3 [00:00<?, ?it/s]Epoch #14:  33%|###3      | 1/3 [14:38<29:17, 878.83s/it]Epoch #14:  67%|######6   | 2/3 [29:19<14:40, 880.05s/it]Epoch #14: 100%|##########| 3/3 [44:06<00:00, 882.97s/it]Epoch #14: 100%|##########| 3/3 [44:06<00:00, 882.06s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
+
+Epoch #14:   0%|          | 0/3 [00:00<?, ?it/s]
+Epoch #14:  33%|###3      | 1/3 [14:38<29:17, 878.83s/it]
+Epoch #14:  67%|######6   | 2/3 [29:19<14:40, 880.05s/it]
+Epoch #14: 100%|##########| 3/3 [44:06<00:00, 882.97s/it]
+Epoch #14: 100%|##########| 3/3 [44:06<00:00, 882.06s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
 
 finish evaluating on /mnt/data/quant/qlib/data/order/valid/
 Epoch #14: test_reward: 0.6725, best_reward: 0.6804 in #13
-Epoch #15:   0%|          | 0/3 [00:00<?, ?it/s]Epoch #15:  33%|###3      | 1/3 [14:37<29:14, 877.28s/it]Epoch #15:  67%|######6   | 2/3 [29:12<14:36, 876.11s/it]Epoch #15: 100%|##########| 3/3 [43:57<00:00, 879.96s/it]Epoch #15: 100%|##########| 3/3 [43:57<00:00, 879.04s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
+
+Epoch #15:   0%|          | 0/3 [00:00<?, ?it/s]
+Epoch #15:  33%|###3      | 1/3 [14:37<29:14, 877.28s/it]
+Epoch #15:  67%|######6   | 2/3 [29:12<14:36, 876.11s/it]
+Epoch #15: 100%|##########| 3/3 [43:57<00:00, 879.96s/it]
+Epoch #15: 100%|##########| 3/3 [43:57<00:00, 879.04s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
 
 finish evaluating on /mnt/data/quant/qlib/data/order/valid/
 Epoch #15: test_reward: 0.6920, best_reward: 0.6920 in #15
-Epoch #16:   0%|          | 0/3 [00:00<?, ?it/s]Epoch #16:  33%|###3      | 1/3 [14:56<29:52, 896.07s/it]Epoch #16:  67%|######6   | 2/3 [29:54<14:57, 897.51s/it]Epoch #16: 100%|##########| 3/3 [44:50<00:00, 896.72s/it]Epoch #16: 100%|##########| 3/3 [44:50<00:00, 896.79s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
+
+Epoch #16:   0%|          | 0/3 [00:00<?, ?it/s]
+Epoch #16:  33%|###3      | 1/3 [14:56<29:52, 896.07s/it]
+Epoch #16:  67%|######6   | 2/3 [29:54<14:57, 897.51s/it]
+Epoch #16: 100%|##########| 3/3 [44:50<00:00, 896.72s/it]
+Epoch #16: 100%|##########| 3/3 [44:50<00:00, 896.79s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
 
 finish evaluating on /mnt/data/quant/qlib/data/order/valid/
 Epoch #16: test_reward: 0.6921, best_reward: 0.6921 in #16
-Epoch #17:   0%|          | 0/3 [00:00<?, ?it/s]Epoch #17:  33%|###3      | 1/3 [15:09<30:18, 909.23s/it]Epoch #17:  67%|######6   | 2/3 [30:40<15:22, 922.23s/it]Epoch #17: 100%|##########| 3/3 [46:26<00:00, 933.03s/it]Epoch #17: 100%|##########| 3/3 [46:26<00:00, 928.82s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
+
+Epoch #17:   0%|          | 0/3 [00:00<?, ?it/s]
+Epoch #17:  33%|###3      | 1/3 [15:09<30:18, 909.23s/it]
+Epoch #17:  67%|######6   | 2/3 [30:40<15:22, 922.23s/it]
+Epoch #17: 100%|##########| 3/3 [46:26<00:00, 933.03s/it]
+Epoch #17: 100%|##########| 3/3 [46:26<00:00, 928.82s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
 
 finish evaluating on /mnt/data/quant/qlib/data/order/valid/
 Epoch #17: test_reward: 0.6863, best_reward: 0.6921 in #16
-Epoch #18:   0%|          | 0/3 [00:00<?, ?it/s]Epoch #18:  33%|###3      | 1/3 [15:51<31:43, 951.89s/it]Epoch #18:  67%|######6   | 2/3 [31:56<15:59, 959.11s/it]Epoch #18: 100%|##########| 3/3 [48:04<00:00, 963.20s/it]Epoch #18: 100%|##########| 3/3 [48:04<00:00, 961.37s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
+
+Epoch #18:   0%|          | 0/3 [00:00<?, ?it/s]
+Epoch #18:  33%|###3      | 1/3 [15:51<31:43, 951.89s/it]
+Epoch #18:  67%|######6   | 2/3 [31:56<15:59, 959.11s/it]
+Epoch #18: 100%|##########| 3/3 [48:04<00:00, 963.20s/it]
+Epoch #18: 100%|##########| 3/3 [48:04<00:00, 961.37s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
 
 finish evaluating on /mnt/data/quant/qlib/data/order/valid/
 Epoch #18: test_reward: 0.6204, best_reward: 0.6921 in #16
-Epoch #19:   0%|          | 0/3 [00:00<?, ?it/s]Epoch #19:  33%|###3      | 1/3 [16:36<33:12, 996.12s/it]Epoch #19:  67%|######6   | 2/3 [33:24<16:43, 1003.27s/it]Epoch #19: 100%|##########| 3/3 [50:17<00:00, 1007.58s/it]Epoch #19: 100%|##########| 3/3 [50:17<00:00, 1005.70s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
+
+Epoch #19:   0%|          | 0/3 [00:00<?, ?it/s]
+Epoch #19:  33%|###3      | 1/3 [16:36<33:12, 996.12s/it]
+Epoch #19:  67%|######6   | 2/3 [33:24<16:43, 1003.27s/it]
+Epoch #19: 100%|##########| 3/3 [50:17<00:00, 1007.58s/it]
+Epoch #19: 100%|##########| 3/3 [50:17<00:00, 1005.70s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
 
 finish evaluating on /mnt/data/quant/qlib/data/order/valid/
 Epoch #19: test_reward: 0.6688, best_reward: 0.6921 in #16
-Epoch #20:   0%|          | 0/3 [00:00<?, ?it/s]Epoch #20:  33%|###3      | 1/3 [16:36<33:12, 996.08s/it]Epoch #20:  67%|######6   | 2/3 [33:23<16:42, 1002.67s/it]Epoch #20: 100%|##########| 3/3 [50:35<00:00, 1016.30s/it]Epoch #20: 100%|##########| 3/3 [50:35<00:00, 1011.96s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
+
+Epoch #20:   0%|          | 0/3 [00:00<?, ?it/s]
+Epoch #20:  33%|###3      | 1/3 [16:36<33:12, 996.08s/it]
+Epoch #20:  67%|######6   | 2/3 [33:23<16:42, 1002.67s/it]
+Epoch #20: 100%|##########| 3/3 [50:35<00:00, 1016.30s/it]
+Epoch #20: 100%|##########| 3/3 [50:35<00:00, 1011.96s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
 
 finish evaluating on /mnt/data/quant/qlib/data/order/valid/
 Epoch #20: test_reward: 0.6552, best_reward: 0.6921 in #16
-Epoch #21:   0%|          | 0/3 [00:00<?, ?it/s]Epoch #21:  33%|###3      | 1/3 [17:42<35:25, 1062.63s/it]Epoch #21:  67%|######6   | 2/3 [35:43<17:53, 1073.57s/it]Epoch #21: 100%|##########| 3/3 [53:28<00:00, 1069.34s/it]Epoch #21: 100%|##########| 3/3 [53:28<00:00, 1069.39s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
+
+Epoch #21:   0%|          | 0/3 [00:00<?, ?it/s]
+Epoch #21:  33%|###3      | 1/3 [17:42<35:25, 1062.63s/it]
+Epoch #21:  67%|######6   | 2/3 [35:43<17:53, 1073.57s/it]
+Epoch #21: 100%|##########| 3/3 [53:28<00:00, 1069.34s/it]
+Epoch #21: 100%|##########| 3/3 [53:28<00:00, 1069.39s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
 
 finish evaluating on /mnt/data/quant/qlib/data/order/valid/
 Epoch #21: test_reward: 0.6744, best_reward: 0.6921 in #16
-Epoch #22:   0%|          | 0/3 [00:00<?, ?it/s]Epoch #22:  33%|###3      | 1/3 [17:44<35:28, 1064.02s/it]Epoch #22:  67%|######6   | 2/3 [36:18<18:13, 1093.89s/it]Epoch #22: 100%|##########| 3/3 [55:04<00:00, 1108.44s/it]Epoch #22: 100%|##########| 3/3 [55:04<00:00, 1101.52s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
+
+Epoch #22:   0%|          | 0/3 [00:00<?, ?it/s]
+Epoch #22:  33%|###3      | 1/3 [17:44<35:28, 1064.02s/it]
+Epoch #22:  67%|######6   | 2/3 [36:18<18:13, 1093.89s/it]
+Epoch #22: 100%|##########| 3/3 [55:04<00:00, 1108.44s/it]
+Epoch #22: 100%|##########| 3/3 [55:04<00:00, 1101.52s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
 
 finish evaluating on /mnt/data/quant/qlib/data/order/valid/
 Epoch #22: test_reward: 0.6615, best_reward: 0.6921 in #16
-Epoch #23:   0%|          | 0/3 [00:00<?, ?it/s]Epoch #23:  33%|###3      | 1/3 [18:43<37:26, 1123.30s/it]Epoch #23:  67%|######6   | 2/3 [37:39<18:50, 1130.83s/it]Epoch #23: 100%|##########| 3/3 [56:44<00:00, 1137.47s/it]Epoch #23: 100%|##########| 3/3 [56:44<00:00, 1134.93s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
+
+Epoch #23:   0%|          | 0/3 [00:00<?, ?it/s]
+Epoch #23:  33%|###3      | 1/3 [18:43<37:26, 1123.30s/it]
+Epoch #23:  67%|######6   | 2/3 [37:39<18:50, 1130.83s/it]
+Epoch #23: 100%|##########| 3/3 [56:44<00:00, 1137.47s/it]
+Epoch #23: 100%|##########| 3/3 [56:44<00:00, 1134.93s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
 
 finish evaluating on /mnt/data/quant/qlib/data/order/valid/
 Epoch #23: test_reward: 0.6446, best_reward: 0.6921 in #16
-Epoch #24:   0%|          | 0/3 [00:00<?, ?it/s]Epoch #24:  33%|###3      | 1/3 [19:51<39:43, 1191.67s/it]Epoch #24:  67%|######6   | 2/3 [40:06<20:05, 1205.18s/it]Epoch #24: 100%|##########| 3/3 [59:56<00:00, 1198.39s/it]Epoch #24: 100%|##########| 3/3 [59:56<00:00, 1198.88s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
+
+Epoch #24:   0%|          | 0/3 [00:00<?, ?it/s]
+Epoch #24:  33%|###3      | 1/3 [19:51<39:43, 1191.67s/it]
+Epoch #24:  67%|######6   | 2/3 [40:06<20:05, 1205.18s/it]
+Epoch #24: 100%|##########| 3/3 [59:56<00:00, 1198.39s/it]
+Epoch #24: 100%|##########| 3/3 [59:56<00:00, 1198.88s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
 
 finish evaluating on /mnt/data/quant/qlib/data/order/valid/
 Epoch #24: test_reward: 0.6343, best_reward: 0.6921 in #16
-Epoch #25:   0%|          | 0/3 [00:00<?, ?it/s]Epoch #25:  33%|###3      | 1/3 [19:38<39:16, 1178.44s/it]
+
+Epoch #25:   0%|          | 0/3 [00:00<?, ?it/s]
+Epoch #25:  33%|###3      | 1/3 [19:38<39:16, 1178.44s/it]
