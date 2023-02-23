@@ -23,15 +23,15 @@ class VP_Penalty_small(Instant_Reward):
 
 
 class VP_Penalty_small_vec(VP_Penalty_small):
-    def get_reward(self, performance_raise, v_t, target, *args):
+    def get_reward(self, performance_raise, trade_pos, *args):
         """
 
         :param performance_raise: Abs(vv_ratio_t - 1) * 10000.
         :param target: Target volume
         :param v_t: The traded volume
         """
-        assert target > 0
-        reward = performance_raise * v_t.sum() / target
+        assert trade_pos > 0
+        reward = performance_raise * trade_pos
         # reward -= self.penalty * ((v_t / target) ** 2).sum()# TODO: 不知道有无必要， 我想卖得越早越好(这个值很小， 影响还需要确认)
-        assert not (np.isnan(reward) or np.isinf(reward)), f"{performance_raise}, {v_t}, {target}"
+        assert not (np.isnan(reward) or np.isinf(reward)), f"{performance_raise}"
         return reward / 100

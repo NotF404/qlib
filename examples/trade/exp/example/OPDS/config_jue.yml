@@ -3,89 +3,57 @@ task: eval
 policy_path: /mnt/data/quant/qlib/examples/log/example/OPDS_4/policy_best
 log_dir: /mnt/data/quant/qlib/examples/log/example/OPDS_4/
 buffer_size: 80000
-train_start_date: "2018-09-18"
-train_end_date: "2021-06-30"
-valid_start_date: "2021-07-01"
-valid_end_date: "2022-07-04"
-test_start_date: "2021-07-01"
-test_end_date: "2022-07-04"
-instruments: "csi_nost_20_300y"
-day_data_cache_dir: /mnt/data/quant/qlib/data/day_data_cache_dir/
-min_data_dir: /mnt/stockdata/eastmoney_min_data
-stock_trade_dates: /mnt/dev/HIST/stock_trade_date.json
-n_days: 2
 io_conf:
-  test_sampler: JueTestSampler
-  train_sampler: JueSampler
+  test_sampler: 
+    name: JueSampler
+    config:
+      train_start_date: "20180918"
+      train_end_date: "20210630"
+      valid_start_date: "20210701"
+      valid_end_date: "20220704"
+      test_start_date: "20210701"
+      test_end_date: "20220704"
+      instruments: "all_2018"
+      day_cache_dir: '/mnt/data/quant/qlib/data/day_data_cache_dir'
+      min_data_dir: "/mnt/stockdata/eastmoney_min_data/"
+      n_days: 5
+      is_train: true
+      is_realtime: false
+  train_sampler: 
+    name: JueSampler
+    config:
+      train_start_date: "20180918"
+      train_end_date: "20210630"
+      valid_start_date: "20210701"
+      valid_end_date: "20220704"
+      test_start_date: "20210701"
+      test_end_date: "20220704"
+      instruments: "all_2018"
+      day_cache_dir: '/mnt/data/quant/qlib/data/day_data_cache_dir'
+      min_data_dir: "/mnt/stockdata/eastmoney_min_data/"
+      n_days: 5
+      is_train: False
+      is_realtime: false
   test_logger: DFLogger
 resources:
   num_cpus: 24
   num_gpus: 1
   device: cuda
-train_paths:
-  raw_dir: /mnt/data/quant/qlib/data/backtest/
-  order_dir: /mnt/data/quant/qlib/data/order/train/
-  train_start_date: "2018-09-18"
-  train_end_date: "2021-06-30"
-  valid_start_date: "2021-07-01"
-  valid_end_date: "2022-07-04"
-  test_start_date: "2021-07-01"
-  test_end_date: "2022-07-04"
-  instruments: "csi_nost_20_300y"
-  day_data_cache_dir: /mnt/data/quant/qlib/data/day_data_cache_dir/
-  min_data_dir: /mnt/stockdata/eastmoney_min_data
-  stock_trade_dates: /mnt/dev/HIST/stock_trade_date.json
-  n_days: 2
-
-valid_paths:
-  raw_dir: /mnt/data/quant/qlib/data/backtest/
-  order_dir: /mnt/data/quant/qlib/data/order/valid/
-  train_start_date: "2018-09-18"
-  train_end_date: "2021-06-30"
-  valid_start_date: "2021-07-01"
-  valid_end_date: "2022-07-04"
-  test_start_date: "2021-07-01"
-  test_end_date: "2022-07-04"
-  instruments: "csi_nost_20_300y"
-  day_data_cache_dir: /mnt/data/quant/qlib/data/day_data_cache_dir/
-  min_data_dir: /mnt/stockdata/eastmoney_min_data
-  stock_trade_dates: /mnt/dev/HIST/stock_trade_date.json
-  n_days: 2
-
-test_paths:
-  raw_dir: /mnt/data/quant/qlib/data/backtest/
-  order_dir: /mnt/data/quant/qlib/data/order/test/
-  train_start_date: "2018-09-18"
-  train_end_date: "2021-06-30"
-  valid_start_date: "2021-07-01"
-  valid_end_date: "2022-07-04"
-  test_start_date: "2021-07-01"
-  test_end_date: "2022-07-04"
-  instruments: "csi_nost_20_300y"
-  day_data_cache_dir: /mnt/data/quant/qlib/data/day_data_cache_dir/
-  min_data_dir: /mnt/stockdata/eastmoney_min_data
-  stock_trade_dates: /mnt/dev/HIST/stock_trade_date.json
-  n_days: 2
-
 env_conf:
   name: JueStockEnv
-  max_step_num: 110
-  limit: 10
-  time_interval: 2
-  interval_num: 55
-  features:
-  - name: raw
-    type: range
-    loc: /mnt/data/quant/qlib/data/normed_feature/
-    size: 180
+  is_buy: false
   obs:
-    name: TeacherObs
-    config: {}
+    name: JueObs
+    config: {
+      feature_size: 6,
+      perfect_info: false
+    }
   action:
     name: Static_Action
     config:
       action_num: 5
       action_map: [0, 0.25, 0.5, 0.75, 1]
+      is_buy: false
   reward:
     VP_Penalty_small_vec:
       penalty: 100
