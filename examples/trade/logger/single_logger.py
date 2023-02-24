@@ -40,8 +40,7 @@ class DFLogger(object):
 
     """
 
-    def __init__(self, log_dir, order_dir, writer=None):
-        self.order_dir = order_dir + "/"
+    def __init__(self, log_dir, writer=None):
         self.log_dir = log_dir + "/"
         if not os.path.exists(log_dir):
             os.mkdir(log_dir)
@@ -49,7 +48,7 @@ class DFLogger(object):
         self.raw_log_dir = self.log_dir
 
     @staticmethod
-    def _worker(log_dir, order_dir, queue):
+    def _worker(log_dir, queue):
         df_cache = {}
         stat_cache = {}
         if not os.path.exists(log_dir):
@@ -117,7 +116,7 @@ class DFLogger(object):
         while not self.queue.empty():
             self.queue.get()
         assert self.queue.empty()
-        self.child = Process(target=self._worker, args=(self.log_dir, self.order_dir, self.queue), daemon=True,)
+        self.child = Process(target=self._worker, args=(self.log_dir, self.queue), daemon=True,)
         self.child.start()
 
     def set_step(self, step):

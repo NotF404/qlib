@@ -1,11 +1,11 @@
 seed: 42
-task: eval
-policy_path: /mnt/data/quant/qlib/examples/log/example/OPDS_4/policy_best
-log_dir: /mnt/data/quant/qlib/examples/log/example/OPDS_4/
+task: train
+policy_path: ''
+log_dir: /mnt/data/quant/qlib/examples/log/example/OPDS_0/
 buffer_size: 80000
 io_conf:
   test_sampler: 
-    name: JueSampler
+    name: Sampler
     config:
       train_start_date: "20180918"
       train_end_date: "20210630"
@@ -20,7 +20,7 @@ io_conf:
       is_train: true
       is_realtime: false
   train_sampler: 
-    name: JueSampler
+    name: Sampler
     config:
       train_start_date: "20180918"
       train_end_date: "20210630"
@@ -71,23 +71,35 @@ policy_conf:
     vf_clip_para: 0.3
 network_conf:
   name: Teacher
-  config:
-    d_feat_day: 7
-    d_feat_min: 2
-    d_model: 128
-    nhead: 4
-    num_layers: 4
-    dropout: 0.2
-    out_shape: 5
-    fc_size: 128
-    perfect_info: False
-    max_min_seq_len: 112
+  extractor:
+    name: NSTransformer
+    config:
+      pred_len: 1
+      seq_len: 964
+      label_len: 121
+      enc_in: 2
+      dec_in: 4
+      c_out: 128
+      dropout: 0.05
+      d_model: 512
+      freq: 't'
+  actor:
+    name: Teacher_Actor
+    config: 
+      out_shape: 5
+      in_shape: 128
+  critic:
+    name: Teacher_Critic
+    config:
+      out_shape: 1
+      in_shape: 128
+
 optim:
-  lr: 1e-4
-  batch_size: 128
+  lr: 1e-5
+  batch_size: 32
   max_epoch: 30
   step_per_epoch: 3
   collect_per_step: 40000
   repeat_per_collect: 5
   early_stopping: 10
-  weight_decay: 0.
+  weight_decay: 0.0001

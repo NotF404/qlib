@@ -6,6 +6,7 @@ import numpy as np
 import torch.nn.functional as F
 import math
 
+from ts_model.ns_models.ns_Transformer import NSTransformer
 
 class PositionalEncoding(nn.Module):
     def __init__(self, d_model, max_len=1000):

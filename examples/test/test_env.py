@@ -25,4 +25,5 @@ while not env.done:
     a = np.random.choice([0]*20 + [1,2,3,4])
     print(a)
     a1 = env.step(a)
+    print(a1[0])
     print(a1[1:])

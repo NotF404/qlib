@@ -102,21 +102,17 @@ class BaseExecutor(object):
             # print(self.policy)
         else:
             assert not network_conf is None
-            if "extractor" in network_conf.keys():
-                net = getattr(network, network_conf["extractor"]["name"] + "_Extractor")(
-                    device=self.device, **network_conf["config"]
-                )
-            else:
-                net = getattr(network, network_conf["name"] + "_Extractor")(
-                    device=self.device, **network_conf["config"]
-                )
+            net = getattr(network, network_conf["extractor"]["name"])(
+                device=self.device, **network_conf['extractor']["config"]
+            )
+
             net.to(self.device)
-            actor = getattr(network, network_conf["name"] + "_Actor")(
-                extractor=net, device=self.device, **network_conf["config"]
+            actor = getattr(network, network_conf['actor']["name"])(
+                extractor=net, device=self.device, **network_conf['actor']["config"]
             )
             actor.to(self.device)
-            critic = getattr(network, network_conf["name"] + "_Critic")(
-                extractor=net, device=self.device, **network_conf["config"]
+            critic = getattr(network, network_conf['critic']["name"])(
+                extractor=net, device=self.device, **network_conf['critic']["config"]
             )
             critic.to(self.device)
             self.optim = torch.optim.Adam(
@@ -191,9 +187,6 @@ class Executor(BaseExecutor):
         log_dir,
         resources,
         env_conf,
-        train_paths,
-        valid_paths,
-        test_paths,
         io_conf,
         optim=None,
         policy_conf=None,
@@ -229,7 +222,6 @@ class Executor(BaseExecutor):
         """
         super().__init__(log_dir, resources, env_conf, optim, policy_conf, network_conf, policy_path, seed)
         single_env = getattr(env, env_conf["name"])
-        env_conf = merge_dicts(env_conf, train_paths)
         env_conf["log"] = True
         print("CPU_COUNT:", resources["num_cpus"])
         if share_memory:
@@ -240,15 +232,10 @@ class Executor(BaseExecutor):
         self.train_collector = Collector(
             self.policy, self.env, buffer=ts.data.ReplayBuffer(buffer_size), reward_metric=np.sum,
         )
-        self.train_paths = train_paths
-        self.test_paths = test_paths
-        self.valid_paths = valid_paths
-        train_sampler_conf = train_paths
-        train_sampler_conf["features"] = env_conf["features"]
-        test_sampler_conf = test_paths
-        test_sampler_conf["features"] = env_conf["features"]
-        self.train_sampler = getattr(sampler, io_conf["train_sampler"])(train_sampler_conf)
-        self.test_sampler = getattr(sampler, io_conf["test_sampler"])(test_sampler_conf)
+
+
+        self.train_sampler = getattr(sampler, io_conf["train_sampler"]['name'])(**io_conf["train_sampler"]['config'])
+        self.test_sampler = getattr(sampler, io_conf["test_sampler"]['name'])(**io_conf["test_sampler"]['config'])
         self.train_logger = logger.InfoLogger()
         self.test_logger = getattr(logger, io_conf["test_logger"])
 
@@ -288,7 +275,7 @@ class Executor(BaseExecutor):
             if t.n <= t.total:
                 t.update()
             result = self.eval(
-                self.valid_paths["order_dir"], logdir=os.path.join(self.log_dir, "valid", str(iteration)) if log_valid else None,
+                logdir=os.path.join(self.log_dir, "valid", str(iteration)) if log_valid else None,
             )
             for k in result.keys():
                 self.writer.add_scalar("Valid/" + k, result[k], global_step=global_step)
@@ -312,7 +299,7 @@ class Executor(BaseExecutor):
                 break
         print("Testing...")
         self.policy.load_state_dict(best_state)
-        result = self.eval(self.test_paths["order_dir"], logdir=os.path.join(self.log_dir, "test"), save_res=True)
+        result = self.eval(logdir=os.path.join(self.log_dir, "test"), save_res=True)
         for k in result.keys():
             self.writer.add_scalar("Test/" + k, result[k], global_step=global_step)
         return result
@@ -333,8 +320,8 @@ class Executor(BaseExecutor):
             losses = self.policy.update(batch_size, self.train_collector.buffer,)
         return result, losses
 
-    def eval(self, order_dir, save_res=False, logdir=None, *args, **kargs):
-        print(f"start evaluating on {order_dir}")
+    def eval(self, save_res=False, logdir=None, *args, **kargs):
+        print(f"start evaluating on {save_res}")
         self.policy.eval()
         self.env.toggle_log(True)
         self.test_sampler.reset()
@@ -343,7 +330,7 @@ class Executor(BaseExecutor):
         if not logdir is None:
             if not os.path.exists(logdir):
                 os.makedirs(logdir)
-            eval_logger = self.test_logger(logdir, order_dir)
+            eval_logger = self.test_logger(logdir)
             eval_logger.reset()
         else:
             eval_logger = self.train_logger
@@ -352,5 +339,5 @@ class Executor(BaseExecutor):
         if save_res:
             with open(os.path.join(self.log_dir, f"res_{datetime.now().isoformat()}.json"), "w") as f:
                 json.dump(result, f, sort_keys=True, indent=4)
-        print(f"finish evaluating on {order_dir}")
+        print(f"finish evaluating on {save_res}")
         return result

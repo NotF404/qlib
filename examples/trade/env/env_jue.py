@@ -4,23 +4,11 @@ gym.logger.set_level(40)
 import numpy as np
 import pandas as pd
 import pickle as pkl
-import datetime
-import random
-import os
-import json
-import time
-import tianshou as ts
-import copy
-from multiprocessing import Process, Pipe, Queue
-from typing import List, Tuple, Union, Optional, Callable, Any
-from tianshou.env.utils import CloudpickleWrapper
-from scipy.stats import pearsonr
-from sklearn.metrics import roc_auc_score
 
 import sys
 
 sys.path.append("..")
-from trade.util import merge_dicts, nan_weighted_avg, robust_auc
+from trade.util import merge_dicts
 from trade import reward
 from trade import observation
 from trade import action
@@ -65,10 +53,10 @@ class JueStockEnv(gym.Env):
         for key in self.reward_log_dict.keys():
             self.reward_log_dict[key] = 0.0
 
-        self.ins = sample['meta_info'].iloc[0]['instrument']
-        self.date = sample['meta_info'].iloc[0]['datetime']
+        sample = sample[0]
+        self.ins = sample['meta_info']['instrument']
+        self.date = sample['meta_info']['datetime']
         # 去掉batch
-        sample['min_dfs'] = sample['min_dfs'][0]
         # close       avg  volume/100     amount/1000    change
         if self.is_buy:
             self.target_df = sample['next_day_min_data'].iloc[0:120]
@@ -220,3 +208,11 @@ class JueStockEnv(gym.Env):
                 reward += tmp_r * self.reward_coef[i]
                 self.reward_log_dict[type(reward_func).__name__] += tmp_r
         return reward
+
+    def render(self, mode='human'):
+        if not self.log: return
+        # if self.background is None:
+        self.traded_log['time'] = self.traded_log.index.strftime('%d%H%M')
+        self.background = self.traded_log.plot(x='time', y='change', figsize=(20,4), ylim=[-0.12, 0.12])
+        ax2 = self.background.twinx() 
+        self.traded_log.plot(x='time', y=self.state['dec_data'][:,-2], color='orange', ax=ax2, title=f"{self.t}")
