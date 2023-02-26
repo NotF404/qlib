@@ -135,7 +135,7 @@ class JueStockEnv(gym.Env):
 
             for i, reward_func in enumerate(self.reward_func_list):
                 if not reward_func.isinstant:
-                    tmp_r = reward_func(performance_raise, 100.0)
+                    tmp_r = reward_func(performance_raise, 1.)
                     reward += tmp_r * self.reward_coef[i]
                     self.reward_log_dict[type(reward_func).__name__] += tmp_r
 
@@ -170,6 +170,7 @@ class JueStockEnv(gym.Env):
             if self.log:
                 info["df"] = self.traded_log
                 info["res"] = res
+                info['ins'] = self.ins
             del self.sample
             return self.state, reward, self.done, info
 
@@ -204,7 +205,7 @@ class JueStockEnv(gym.Env):
         reward = 0
         for i, reward_func in enumerate(self.reward_func_list):
             if reward_func.isinstant:
-                tmp_r = reward_func(performance_raise, pos*100)
+                tmp_r = reward_func(performance_raise, pos)
                 reward += tmp_r * self.reward_coef[i]
                 self.reward_log_dict[type(reward_func).__name__] += tmp_r
         return reward

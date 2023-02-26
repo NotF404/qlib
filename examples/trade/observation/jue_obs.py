@@ -45,7 +45,6 @@ class JueObs():
         if not self.perfect_info:
             dec_data['change'].iloc[index+1:] = self.dec_mask[index+1:, 0]
             dec_data['amount'].iloc[index+1:] = self.dec_mask[index+1:, 1]
-        seqlen = np.array([t+1])
         # assert not (
         #     np.isnan(list_private_state).any() | np.isinf(list_private_state).any()
         # ), f"{private_state}, {target}"
@@ -54,4 +53,4 @@ class JueObs():
         return {"enc_data":self.enc_data[['change', 'amount']].values, 
                 "enc_time":self.enc_time, 
                 "dec_data":dec_data[['change', 'amount', 'position', 'time_step']].values, 
-                "dec_time":self.dec_time, "seqlen":seqlen}
+                "dec_time":self.dec_time, "index":index}

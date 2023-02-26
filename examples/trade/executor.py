@@ -261,6 +261,7 @@ class Executor(BaseExecutor):
         for epoch in range(1, 1 + max_epoch):
             with tqdm.tqdm(total=step_per_epoch, desc=f"Epoch #{epoch}", **tqdm_config) as t:
                 while t.n < t.total:
+                    torch.cuda.empty_cache()
                     result, losses = self.train_round(repeat_per_collect, collect_per_step, batch_size, iteration)
                     global_step += result["n/st"]
                     iteration += 1
@@ -274,6 +275,8 @@ class Executor(BaseExecutor):
                     t.update(1)
             if t.n <= t.total:
                 t.update()
+
+            torch.cuda.empty_cache()
             result = self.eval(
                 logdir=os.path.join(self.log_dir, "valid", str(iteration)) if log_valid else None,
             )
@@ -289,7 +292,7 @@ class Executor(BaseExecutor):
                 early_stop_round += 1
             torch.save(self.policy, f"{self.log_dir}/policy_{epoch}")
             # 防止模式崩塌越来越远， 每次从best开始
-            self.policy.load_state_dict(best_state)
+            # self.policy.load_state_dict(best_state)
             print(
                 f'Epoch #{epoch}: test_reward: {result["rew"]:.4f}, '  # train_reward: {result_train["rew"]:.4f}, '
                 f"best_reward: {best_reward:.4f} in #{best_epoch}"
@@ -297,6 +300,7 @@ class Executor(BaseExecutor):
             if early_stop_round >= early_stopping:
                 print("Early stopped")
                 break
+        return result # 我没有测试集
         print("Testing...")
         self.policy.load_state_dict(best_state)
         result = self.eval(logdir=os.path.join(self.log_dir, "test"), save_res=True)
@@ -310,7 +314,11 @@ class Executor(BaseExecutor):
         self.env.sampler = self.train_sampler
         if not self.q_learning:
             self.train_collector.reset()
+        torch.cuda.empty_cache()
+        print('start training collect:\n')
         result = self.train_collector.collect(n_episode=collect_per_step, log_fn=self.train_logger)
+        torch.cuda.empty_cache()
+        print('finish collect:\n', result)
         result = merge_dicts(result, self.train_logger.summary())
         if not self.q_learning:
             losses = self.policy.update(
@@ -318,12 +326,14 @@ class Executor(BaseExecutor):
             )
         else:
             losses = self.policy.update(batch_size, self.train_collector.buffer,)
+        print('finish update 1 round:\n')
         return result, losses
 
     def eval(self, save_res=False, logdir=None, *args, **kargs):
-        print(f"start evaluating on {save_res}")
+        print(f"start evaluating on {logdir}")
         self.policy.eval()
         self.env.toggle_log(True)
+        torch.cuda.empty_cache()
         self.test_sampler.reset()
         self.env.sampler = self.test_sampler
         self.test_collector.reset()
@@ -339,5 +349,5 @@ class Executor(BaseExecutor):
         if save_res:
             with open(os.path.join(self.log_dir, f"res_{datetime.now().isoformat()}.json"), "w") as f:
                 json.dump(result, f, sort_keys=True, indent=4)
-        print(f"finish evaluating on {save_res}")
+        print(f"finish evaluating on {logdir}")
         return result

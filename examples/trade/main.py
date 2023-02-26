@@ -54,6 +54,8 @@ def run(config):
 
 
 if __name__ == "__main__":
+    import multiprocessing
+    multiprocessing.set_start_method('spawn')
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--config", type=str, default=None)
     parser.add_argument("-n", "--index", type=int, default=None)

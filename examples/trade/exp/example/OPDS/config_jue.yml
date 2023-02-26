@@ -1,6 +1,6 @@
 seed: 42
 task: train
-policy_path: ''
+policy_path: null
 log_dir: /mnt/data/quant/qlib/examples/log/example/OPDS_0/
 buffer_size: 80000
 io_conf:
@@ -36,7 +36,7 @@ io_conf:
       is_realtime: false
   test_logger: DFLogger
 resources:
-  num_cpus: 24
+  num_cpus: 12
   num_gpus: 1
   device: cuda
 env_conf:
@@ -95,11 +95,11 @@ network_conf:
       in_shape: 128
 
 optim:
-  lr: 1e-5
-  batch_size: 32
-  max_epoch: 30
-  step_per_epoch: 3
+  lr: 5e-5
+  batch_size: 16
+  max_epoch: 10
+  step_per_epoch: 2
   collect_per_step: 40000
-  repeat_per_collect: 5
+  repeat_per_collect: 2
   early_stopping: 10
   weight_decay: 0.0001

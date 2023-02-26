@@ -96,8 +96,8 @@ class DFLogger(object):
             else:
                 df = info.pop("df")
                 res = info.pop("res")
-                ins = df.index[0][0]
-                date = df.index[0][1].date().strftime('%Y%m%d')
+                ins = info.pop('ins')
+                date = df.index[0].date().strftime('%Y%m%d')
 
                 # print(os.path.join(log_dir, ins, str(date) + ".log"))
                 os.makedirs(os.path.join(log_dir, ins), exist_ok=True)

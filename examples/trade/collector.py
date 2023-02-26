@@ -7,6 +7,8 @@ from copy import deepcopy
 from numbers import Number
 from typing import Any, Dict, List, Union, Optional, Callable
 
+import tqdm
+
 from vecenv import BaseVectorEnv
 from tianshou.policy import BasePolicy
 from tianshou.data import Batch, ReplayBuffer, ListReplayBuffer, to_numpy
@@ -93,6 +95,11 @@ class Collector(object):
         for b in self._cached_buf:
             b.reset()
         self._ready_env_ids = np.array([x for x in self._ready_env_ids if x not in stop_id])
+
+    def stop_env(self):
+        """采集完了先把sample的读数据停掉
+        """
+        self.env.sampler.stop()
 
     def _reset_state(self, id: Union[int, List[int]]) -> None:
         """Reset the hidden state: self.data.state[id]."""
@@ -182,6 +189,8 @@ class Collector(object):
             assert len(n_episode) == self.get_env_num()
             finished_env_ids = [i for i in self._ready_env_ids if n_episode[i] <= 0]
             self._ready_env_ids = np.array([x for x in self._ready_env_ids if x not in finished_env_ids])
+
+        tbar = tqdm.tqdm(range(n_episode if n_episode is not None else 50000), )
         while True:
             if step_count >= 100000 and episode_count.sum() == 0:
                 warnings.warn(
@@ -308,6 +317,8 @@ class Collector(object):
                 # let self.data be the data in all environments again
                 self.data = whole_data
             self._ready_env_ids = np.array([x for x in self._ready_env_ids if x not in finished_env_ids])
+            if (episode_count.sum() + 1) % 100 == 0:
+                tbar.update(100)
             if n_step:
                 if step_count >= n_step:
                     break
@@ -328,6 +339,8 @@ class Collector(object):
         self.collect_step += step_count
         self.collect_episode += episode_count
         self.collect_time += duration
+
+        self.stop_env()
         return {
             "n/ep": episode_count,
             "n/st": step_count,

@@ -6,7 +6,7 @@ from copy import deepcopy
 import sys
 
 from tianshou.data import to_torch
-from .model import NSTransformer as Teacher_Extractor
+from .model import NSTransformer
 
 class Teacher_Extractor_bak(nn.Module):
     def __init__(self, device="cpu", feature_size=180, **kargs):
