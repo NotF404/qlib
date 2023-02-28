@@ -3,6 +3,7 @@ import gc
 import json
 import random
 import pandas as pd
+import matplotlib.pyplot as plt
 import numpy as np
 import os
 from multiprocessing import Queue, Process
@@ -80,8 +81,9 @@ class DFLogger(object):
                 # print(os.path.join(log_dir, ins, str(date) + ".log"))
                 if random.random() < 0.005:
                     os.makedirs(os.path.join(log_dir, ins), exist_ok=True)
-                    df.to_pickle(os.path.join(os.path.join(log_dir, ins, str(date) + ".pkl")))
-                    res.to_pickle(os.path.join(os.path.join(log_dir, ins, str(date) + ".log")))
+                    plot_action(df, os.path.join(os.path.join(log_dir, ins, str(date) + ".png")))
+                    # df.to_pickle(os.path.join(os.path.join(log_dir, ins, str(date) + ".pkl")))
+                    # res.to_pickle(os.path.join(os.path.join(log_dir, ins, str(date) + ".log")))
                 del df
                 del res
                 gc.collect()
@@ -168,7 +170,6 @@ class InfoLogger(DFLogger):
     def _update(self, info):
         if len(info) == 0:
             return
-        ins = df.index[0][0]
         for k, v in info.items():
             if k not in self.stat_cache:
                 self.stat_cache[k] = []
@@ -196,3 +197,14 @@ class InfoLogger(DFLogger):
 
     def set_step(self, step):
         return
+
+
+def plot_action(df, path, title=''):
+    df['action'] = df['deal_pos']
+    df['time'] = df.index.strftime('%d%H%M')
+    ax1 = df.plot.scatter(x='time', y='action', figsize=(20,4), ylim=[-0.1, 0.5])
+    ax2 = ax1.twinx() 
+    fig = df.plot(x='time', y='change', figsize=(20,4), color='orange', ax=ax2, title=title)
+    plt.savefig(path)
+    plt.close()
+
