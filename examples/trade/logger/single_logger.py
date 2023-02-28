@@ -1,5 +1,7 @@
 from datetime import datetime
+import gc
 import json
+import random
 import pandas as pd
 import numpy as np
 import os
@@ -58,34 +60,10 @@ class DFLogger(object):
             if info == "stop":
                 summary = {}
                 for k, v in stat_cache.items():
-                    if not k.startswith("money"):
-                        summary[k + "_std"] = np.nanstd(v)
-                        summary[k + "_mean"] = np.nanmean(v)
-                try:
-                    for k in ["PR_sell", "ffr_sell", "PA_sell"]:
-                        summary["weighted_" + k] = np.average(stat_cache[k], weights=stat_cache["money_sell"])
-                except:
-                    # summary["weighted_" + k] = np.average(stat_cache[k], weights=stat_cache['money_sell'])
-                    pass
-                try:
-                    for k in ["PR_buy", "ffr_buy", "PA_buy"]:
-                        summary["weighted_" + k] = np.average(stat_cache[k], weights=stat_cache["money_buy"])
-                except:
-                    pass
-                try:
-                    for k in ["obs0_PR", "ffr", "PA"]:
-                        summary["weighted_" + k] = np.average(stat_cache[k], weights=stat_cache["money"])
-                except:
-                    pass
+                    summary[k + "_std"] = np.nanstd(v)
+                    summary[k + "_mean"] = np.nanmean(v)
                 summary["GLR"] = GLR(stat_cache["PA"])
-                try:
-                    summary["GLR_sell"] = GLR(stat_cache["PA_sell"])
-                except:
-                    pass
-                try:
-                    summary["GLR_buy"] = GLR(stat_cache["PA_buy"])
-                except:
-                    pass
+
                 # json.dump(stat_cache, 
                 #         open(os.path.join(log_dir, f'infer_{datetime.now().isoformat()}.log'), 'w'), 
                 #         indent=2, cls=NpEncoder)
@@ -100,9 +78,14 @@ class DFLogger(object):
                 date = df.index[0].date().strftime('%Y%m%d')
 
                 # print(os.path.join(log_dir, ins, str(date) + ".log"))
-                os.makedirs(os.path.join(log_dir, ins), exist_ok=True)
-                df.to_pickle(os.path.join(os.path.join(log_dir, ins, str(date) + ".pkl")))
-                res.to_pickle(os.path.join(os.path.join(log_dir, ins, str(date) + ".log")))
+                if random.random() < 0.005:
+                    os.makedirs(os.path.join(log_dir, ins), exist_ok=True)
+                    df.to_pickle(os.path.join(os.path.join(log_dir, ins, str(date) + ".pkl")))
+                    res.to_pickle(os.path.join(os.path.join(log_dir, ins, str(date) + ".log")))
+                del df
+                del res
+                gc.collect()
+                
                 for k, v in info.items():
                     if k not in stat_cache:
                         stat_cache[k] = []
@@ -163,33 +146,9 @@ class InfoLogger(DFLogger):
             if info == "stop":
                 summary = {}
                 for k, v in stat_cache.items():
-                    if not k.startswith("money"):
-                        summary[k + "_std"] = np.nanstd(v)
-                        summary[k + "_mean"] = np.nanmean(v)
-                try:
-                    for k in ["PR_sell", "ffr_sell", "PA_sell"]:
-                        summary["weighted_" + k] = np.average(stat_cache[k], weights=stat_cache["money_sell"])
-                except:
-                    pass
-                try:
-                    for k in ["PR_buy", "ffr_buy", "PA_buy"]:
-                        summary["weighted_" + k] = np.average(stat_cache[k], weights=stat_cache["money_buy"])
-                except:
-                    pass
-                try:
-                    for k in ["obs0_PR", "ffr", "PA"]:
-                        summary["weighted_" + k] = np.average(stat_cache[k], weights=stat_cache["money"])
-                except:
-                    pass
+                    summary[k + "_std"] = np.nanstd(v)
+                    summary[k + "_mean"] = np.nanmean(v)
                 summary["GLR"] = GLR(stat_cache["PA"])
-                try:
-                    summary["GLR_sell"] = GLR(stat_cache["PA_sell"])
-                except:
-                    pass
-                try:
-                    summary["GLR_buy"] = GLR(stat_cache["PA_buy"])
-                except:
-                    pass
                 queue.put(summary)
                 stat_cache = {}
                 time.sleep(5)
@@ -197,7 +156,7 @@ class InfoLogger(DFLogger):
             if len(info) == 0:
                 continue
             for k, v in info.items():
-                if k == "res" or k == "df":
+                if k == "res" or k == "df" or k == "ins":
                     continue
                 if k not in stat_cache:
                     stat_cache[k] = []

@@ -163,7 +163,6 @@ class JueStockEnv(gym.Env):
             info = {
                 "PR": performance_raise,
                 "PA": PA,
-                "vwap": this_vwap,
             }
 
             info = merge_dicts(info, self.reward_log_dict)

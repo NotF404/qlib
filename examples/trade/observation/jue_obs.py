@@ -52,5 +52,5 @@ class JueObs():
         #     assert not (np.isnan(p).any() | np.isinf(p).any()), f"{p}"
         return {"enc_data":self.enc_data[['change', 'amount']].values, 
                 "enc_time":self.enc_time, 
-                "dec_data":dec_data[['change', 'amount', 'position', 'time_step']].values, 
+                "dec_data":dec_data[['change', 'amount', 'position', 'time_step']].values.copy(), 
                 "dec_time":self.dec_time, "index":index}
