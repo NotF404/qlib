@@ -249,6 +249,8 @@ class PPO(PGPolicy):
             "loss/vf": vf_losses,
             "loss/entropy": ent_losses,
             "loss/kl": kl_losses,
+            "reward": batch.rew.tolist(),
+            'returns': batch.returns.detach().cpu().numpy().tolist()
         }
         if not self.teacher is None:
             res["loss/supervision"] = supervision_losses

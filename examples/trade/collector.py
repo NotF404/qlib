@@ -285,6 +285,8 @@ class Collector(object):
                 if done[j]:
                     if not (isinstance(n_episode, list) and episode_count[i] >= n_episode[i]):
                         episode_count[i] += 1
+                        if (episode_count.sum() + 1) % 100 == 0:
+                            tbar.update(100)
                         rewards.append(self._rew_metric(np.sum(self._cached_buf[i].rew, axis=0)))
                         step_count += len(self._cached_buf[i])
                         if self.buffer is not None:
@@ -317,8 +319,6 @@ class Collector(object):
                 # let self.data be the data in all environments again
                 self.data = whole_data
             self._ready_env_ids = np.array([x for x in self._ready_env_ids if x not in finished_env_ids])
-            if (episode_count.sum() + 1) % 100 == 0:
-                tbar.update(100)
             if n_step:
                 if step_count >= n_step:
                     break
@@ -350,6 +350,8 @@ class Collector(object):
             "t/re": reset_time / episode_count,
             "t/mo": model_time / step_count,
             "rew": np.mean(rewards),
+            "max_rew": np.max(rewards),
+            "min_rew": np.min(rewards),
             "rew_std": np.std(rewards),
             "len": step_count / episode_count,
         }

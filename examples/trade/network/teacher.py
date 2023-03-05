@@ -8,7 +8,7 @@ import sys
 from tianshou.data import to_torch
 from .model import NSTransformer
 
-class Teacher_Extractor_bak(nn.Module):
+class Teacher_Extractor(nn.Module):
     def __init__(self, device="cpu", feature_size=180, **kargs):
         super().__init__()
         self.device = device
@@ -26,7 +26,15 @@ class Teacher_Extractor_bak(nn.Module):
             nn.Linear(hidden_size * 2, hidden_size), nn.ReLU(), nn.Linear(hidden_size, 32), nn.ReLU(),
         )
 
+    def _to_device(self, data):
+        return torch.from_numpy(data).float().to(self.device)
+
+    def obs2arg(self, obs):
+        return self._to_device(obs['enc_data']), self._to_device(obs['enc_time']), self._to_device(obs['dec_data']), self._to_device(obs['dec_time']), obs['index']
+
     def forward(self, inp):
+
+        x_enc, x_mark_enc, x_dec, x_mark_dec, index = self.obs2arg(inp)
         inp = to_torch(inp, dtype=torch.float32, device=self.device)
         seq_len = inp[:, -1].to(torch.long)
         batch_size = inp.shape[0]

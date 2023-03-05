@@ -26,6 +26,8 @@ class JueStockEnv(gym.Env):
             self.log = True
         # loader_conf = config['loader']['config']
         self.is_buy = config["is_buy"]
+        self.target_df_start = config["target_df_start"]
+        self.target_df_end = config["target_df_end"]
         obs_conf = config["obs"]["config"]
         self.obs = getattr(observation, config["obs"]["name"])(obs_conf)
         self.action_func = getattr(action, config["action"]["name"])(config["action"]["config"])
@@ -39,6 +41,7 @@ class JueStockEnv(gym.Env):
         self.observation_space = self.obs.get_space()
         self.action_space = self.action_func.get_space()
         self.target_money = 5000000
+        self.penalty_time = 0.01 / 120 / 120 # 所有step的惩罚加起来在0.5%
 
     def toggle_log(self, log):
         self.log = log
@@ -59,9 +62,9 @@ class JueStockEnv(gym.Env):
         # 去掉batch
         # close       avg  volume/100     amount/1000    change
         if self.is_buy:
-            self.target_df = sample['next_day_min_data'].iloc[0:120]
+            self.target_df = sample['next_day_min_data'].iloc[self.target_df_start: self.target_df_end]
         else:
-            self.target_df = sample['min_dfs'][-1].iloc[121:241]
+            self.target_df = sample['min_dfs'][-1].iloc[self.target_df_start: self.target_df_end]
 
         self.sample = sample
 
@@ -79,8 +82,12 @@ class JueStockEnv(gym.Env):
         )
         self.traded_log = self.target_df.copy(deep=True)
         self.traded_log['deal_pos'] = 0.
-        self.day_vwap = self.target_df.iloc[-1].avg
-        self.day_twap = np.nanmean(self.target_df["avg"].values)
+        self.traded_log['reward'] = 0.
+        self.day_vwap = np.nanmean(self.target_df["close"] * self.target_df['amount'])
+        self.day_twap = np.nanmean(self.target_df["close"].values)
+        self.day_high = self.target_df.close.max()
+        self.day_low = self.target_df.close.min()
+        self.day_amp = (self.day_high - self.day_low) / self.day_low * 100
         try:
             assert not (np.isnan(self.day_vwap) or np.isinf(self.day_vwap))
         except:
@@ -107,18 +114,26 @@ class JueStockEnv(gym.Env):
             action,
             self.position,
         )
+        self.traded_log.loc[self.traded_log.index[self.t], 'deal_pos'] = pos
+
         reward = 0.0
-        reward += self.handle_pos(pos)
 
         if self.t == self.max_step_num - 1:
             self.done = True
             if self.is_buy:
-                reward += self.handle_pos(1.0 - self.position)
+                last_pos = 1.0 - self.position
             else:
-                reward += self.handle_pos(self.position)
+                last_pos = self.position
+            last_pos = 0.1
+            reward += self.handle_pos(last_pos)
+            self.traded_log.loc[self.traded_log.index[self.t], 'deal_pos'] = last_pos
+        else: 
+            reward += self.handle_pos(pos)
 
         if (self.position < ZERO and not self.is_buy) or (self.position >= 1.0 and self.is_buy):
             self.done = True
+
+        self.traded_log.loc[self.traded_log.index[self.t], 'reward'] = reward
 
         if self.done:
             this_vwap = (self.traded_log['close'] * self.traded_log['deal_pos']).sum()
@@ -133,11 +148,11 @@ class JueStockEnv(gym.Env):
                 performance_raise = (this_vv_ratio - 1) * 10000
                 PA = (this_tt_ratio - 1) * 10000
 
-            for i, reward_func in enumerate(self.reward_func_list):
-                if not reward_func.isinstant:
-                    tmp_r = reward_func(performance_raise, 1.)
-                    reward += tmp_r * self.reward_coef[i]
-                    self.reward_log_dict[type(reward_func).__name__] += tmp_r
+            # for i, reward_func in enumerate(self.reward_func_list):
+            #     if reward_func.isinstant():
+            #         tmp_r = reward_func(PA, 1.)
+            #         reward += tmp_r * self.reward_coef[i]
+            #         self.reward_log_dict[type(reward_func).__name__] += tmp_r
 
             self.state = self.obs(
                 self.sample, 
@@ -146,29 +161,17 @@ class JueStockEnv(gym.Env):
                 self.position, 
                 self.is_buy
                 )
-            if self.log:
-                res = pd.DataFrame(
-                    {
-                        "sell": not self.is_buy,
-                        "vwap": this_vwap,
-                        "this_vv_ratio": this_vv_ratio,
-                        "reward": reward,
-                        "PR": performance_raise,
-                        'day_vwap': self.day_vwap,
-                        'PA':PA
-
-                    },
-                    index=[[self.ins], [self.date]],
-                )
             info = {
                 "PR": performance_raise,
                 "PA": PA,
+                "reward": reward,
+                # 'vwap':self.day_vwap,
+                # 'twap':self.day_twap
             }
 
             info = merge_dicts(info, self.reward_log_dict)
             if self.log:
                 info["df"] = self.traded_log
-                info["res"] = res
                 info['ins'] = self.ins
             del self.sample
             return self.state, reward, self.done, info
@@ -185,15 +188,8 @@ class JueStockEnv(gym.Env):
             return self.state, reward, self.done, {}
 
     def handle_pos(self, pos):
-        if pos == 0.: return 0
-        if self.is_buy:
-            self.position += pos
-        else:
-            self.position -= pos
+        
         close = self.target_df.iloc[self.t].close
-
-        self.traded_log.loc[self.traded_log.index[self.t], 'deal_pos'] = pos
-
         if self.is_buy:
             performance_raise = (1 - close / self.day_vwap) * 10000
             PA_t = (1 - close / self.day_twap) * 10000
@@ -201,13 +197,29 @@ class JueStockEnv(gym.Env):
             performance_raise = (close / self.day_vwap - 1) * 10000
             PA_t = (close / self.day_twap - 1) * 10000
 
-        reward = 0
+        reward = - self.t * self.penalty_time
+
+        if pos == 0.: return reward - PA_t * 0.0001
+        if self.is_buy:
+            self.position += pos
+        else:
+            self.position -= pos
+
         for i, reward_func in enumerate(self.reward_func_list):
-            if reward_func.isinstant:
-                tmp_r = reward_func(performance_raise, pos)
-                reward += tmp_r * self.reward_coef[i]
+            if reward_func.isinstant():
+                tmp_r = reward_func(PA_t, pos, self.day_amp)
+                reward += tmp_r * self.reward_coef[i] # 按涨幅做归一化
                 self.reward_log_dict[type(reward_func).__name__] += tmp_r
+        if abs(reward) > 3: self.log_info(f'reward>3, {reward}, {PA_t}, {close}, {performance_raise}, {pos}')
         return reward
+
+    def log_info(self, msg):
+        print(msg, ':\n' ,'day_high', self.day_high, 
+                'day_low', self.day_low, 
+                'day_vwap', self.day_vwap, 
+                'day_twap', self.day_twap,
+                'day_amp',self.day_amp)
+        print('reward_log_dict:\n', self.reward_log_dict)
 
     def render(self, mode='human'):
         if not self.log: return

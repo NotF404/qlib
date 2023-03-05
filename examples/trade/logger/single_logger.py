@@ -74,18 +74,16 @@ class DFLogger(object):
                 continue
             else:
                 df = info.pop("df")
-                res = info.pop("res")
                 ins = info.pop('ins')
                 date = df.index[0].date().strftime('%Y%m%d')
 
                 # print(os.path.join(log_dir, ins, str(date) + ".log"))
-                if random.random() < 0.005:
-                    os.makedirs(os.path.join(log_dir, ins), exist_ok=True)
-                    plot_action(df, os.path.join(os.path.join(log_dir, ins, str(date) + ".png")))
+                # if random.random() < 0.005:
+                os.makedirs(os.path.join(log_dir, ins), exist_ok=True)
+                plot_action(df, os.path.join(os.path.join(log_dir, ins, str(date) + ".png")))
                     # df.to_pickle(os.path.join(os.path.join(log_dir, ins, str(date) + ".pkl")))
                     # res.to_pickle(os.path.join(os.path.join(log_dir, ins, str(date) + ".log")))
                 del df
-                del res
                 gc.collect()
                 
                 for k, v in info.items():
@@ -201,10 +199,15 @@ class InfoLogger(DFLogger):
 
 def plot_action(df, path, title=''):
     df['action'] = df['deal_pos']
-    df['time'] = df.index.strftime('%d%H%M')
-    ax1 = df.plot.scatter(x='time', y='action', figsize=(20,4), ylim=[-0.1, 0.5])
+    df['time'] = df.index.strftime('%H%M')
+    df['reward'] = df['reward'] * 0.1
+
+    ax1 = df.plot(x='time', y='reward', figsize=(12,4), color='red')
+    df.plot(x='time', y='change', figsize=(12,4), color='orange', ax=ax1, title=title)
     ax2 = ax1.twinx() 
-    fig = df.plot(x='time', y='change', figsize=(20,4), color='orange', ax=ax2, title=title)
+
+    df.plot.scatter(x='time', y='action', figsize=(12,4), ylim=[-0.1, 0.5], ax=ax2)
+    
     plt.savefig(path)
     plt.close()
 

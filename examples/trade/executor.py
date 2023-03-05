@@ -272,6 +272,7 @@ class Executor(BaseExecutor):
                             stat[k] = MovAvg()
                         stat[k].add(losses[k])
                         self.writer.add_scalar("Train/" + k, stat[k].get(), global_step=global_step)
+                    print('finish update 1 round:\n', {k: (np.mean(v), np.std(v), np.max(v), np.min(v))for k, v in losses.items()})
                     t.update(1)
             if t.n <= t.total:
                 t.update()
@@ -326,7 +327,6 @@ class Executor(BaseExecutor):
             )
         else:
             losses = self.policy.update(batch_size, self.train_collector.buffer,)
-        print('finish update 1 round:\n')
         return result, losses
 
     def eval(self, save_res=False, logdir=None, *args, **kargs):

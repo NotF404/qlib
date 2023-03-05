@@ -1,6 +1,7 @@
 
 import sys
 import os
+from matplotlib import pyplot as plt
 import numpy as np
 sys.path.append('/mnt/data/quant/qlib/examples/')
 from trade.env.env_jue import JueStockEnv
@@ -19,11 +20,27 @@ env = JueStockEnv(c['env_conf'])
     # print(_, samp.index[_])
 sample = samp.sample()
 # print(sample)
+def plot_action(df, path, title=''):
+    df['action'] = df['deal_pos']
+    df['time'] = df.index.strftime('%H%M')
+    df['reward'] = df['reward'] * 0.1
+
+    ax1 = df.plot(x='time', y='reward', figsize=(12,4), color='red')
+    df.plot(x='time', y='change', figsize=(12,4), color='orange', ax=ax1, title=title)
+    ax2 = ax1.twinx() 
+
+    df.plot.scatter(x='time', y='action', figsize=(12,4), ylim=[-0.1, 0.5], ax=ax2)
+    
+
+    plt.savefig(path)
+    plt.close()
+    
 a0 = env.reset(samp.sample())
 while not env.done:
     a = env.action_space.sample()
-    a = np.random.choice([0]*20 + [1,2,3,4])
+    a = np.random.choice([1]*20 + [0,2])
     print(a)
     a1 = env.step(a)
-    print(a1[0])
+    # print(a1[0])
     print(a1[1:])
+plot_action(env.traded_log, 'b.png')

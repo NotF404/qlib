@@ -1,38 +1,38 @@
 seed: 42
 task: train
 policy_path: null
-log_dir: /mnt/data/quant/qlib/examples/log/example/OPDS_2/
+log_dir: /mnt/data/quant/qlib/examples/log/example/OPDS_16
 buffer_size: 80000
 io_conf:
   test_sampler: 
     name: Sampler
     config:
       train_start_date: "20180918"
-      train_end_date: "20210630"
-      valid_start_date: "20210701"
-      valid_end_date: "20220704"
-      test_start_date: "20210701"
-      test_end_date: "20220704"
+      train_end_date: "20221101"
+      valid_start_date: "20221110"
+      valid_end_date: "20221215"
+      test_start_date: "20221110"
+      test_end_date: "20221215"
       instruments: "all_2018"
-      day_cache_dir: '/mnt/data/quant/qlib/data/day_data_cache_dir'
+      day_cache_dir: /mnt/data/quant/qlib/data/day_data_cache_dir
       min_data_dir: "/mnt/stockdata/eastmoney_min_data/"
       n_days: 5
-      is_train: true
+      is_train: False
       is_realtime: false
   train_sampler: 
     name: Sampler
     config:
       train_start_date: "20180918"
-      train_end_date: "20210630"
-      valid_start_date: "20210701"
-      valid_end_date: "20220704"
-      test_start_date: "20210701"
-      test_end_date: "20220704"
+      train_end_date: "20221101"
+      valid_start_date: "20221110"
+      valid_end_date: "20221215"
+      test_start_date: "20221110"
+      test_end_date: "20221215"
       instruments: "all_2018"
       day_cache_dir: '/mnt/data/quant/qlib/data/day_data_cache_dir'
       min_data_dir: "/mnt/stockdata/eastmoney_min_data/"
       n_days: 5
-      is_train: False
+      is_train: True
       is_realtime: false
   test_logger: DFLogger
 resources:
@@ -42,11 +42,13 @@ resources:
 env_conf:
   name: JueStockEnv
   is_buy: false
+  target_df_start: 0
+  target_df_end: 120
   obs:
     name: JueObs
     config: {
       feature_size: 6,
-      perfect_info: false
+      perfect_info: true
     }
   action:
     name: Static_Action
@@ -99,7 +101,7 @@ optim:
   batch_size: 16
   max_epoch: 10
   step_per_epoch: 2
-  collect_per_step: 40000
+  collect_per_step: 4000
   repeat_per_collect: 2
   early_stopping: 10
   weight_decay: 0.0001

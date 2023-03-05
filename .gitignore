@@ -9,7 +9,8 @@ __pycache__/
 _build
 build/
 dist/
-
+*.log
+log/
 
 *.pkl
 *.hd5
