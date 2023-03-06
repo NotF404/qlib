@@ -297,6 +297,10 @@ class Executor(BaseExecutor):
             print(
                 f'Epoch #{epoch}: test_reward: {result["rew"]:.4f}, '  # train_reward: {result_train["rew"]:.4f}, '
                 f"best_reward: {best_reward:.4f} in #{best_epoch}"
+                f'GLR_PR: {result["GLR_PR"]:.4f}'
+                f'GLR_PA: {result["GLR_PA"]:.4f}'
+                f'PA_mean: {result["PA_mean"]:.4f}'
+                f'PR_mean: {result["PR_mean"]:.4f}'
             )
             if early_stop_round >= early_stopping:
                 print("Early stopped")

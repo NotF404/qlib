@@ -1,7 +1,7 @@
 seed: 42
 task: train
 policy_path: null
-log_dir: /mnt/data/quant/qlib/examples/log/example/OPDS_16
+log_dir: /mnt/data/quant/qlib/examples/log/example/OPDS_17_PPOwoAC
 buffer_size: 80000
 io_conf:
   test_sampler: 
@@ -61,7 +61,7 @@ env_conf:
       penalty: 100
       coefficient: 1
 policy_conf:
-  name: PPO
+  name: PPOwoAC
   config:
     discount_factor: 1.
     max_grad_norm: 100.

@@ -83,7 +83,7 @@ class JueStockEnv(gym.Env):
         self.traded_log = self.target_df.copy(deep=True)
         self.traded_log['deal_pos'] = 0.
         self.traded_log['reward'] = 0.
-        self.day_vwap = np.nanmean(self.target_df["close"] * self.target_df['amount'])
+        self.day_vwap = np.nansum(self.target_df["close"] * self.target_df['amount']) / self.target_df['amount'].sum()
         self.day_twap = np.nanmean(self.target_df["close"].values)
         self.day_high = self.target_df.close.max()
         self.day_low = self.target_df.close.min()
@@ -124,8 +124,7 @@ class JueStockEnv(gym.Env):
                 last_pos = 1.0 - self.position
             else:
                 last_pos = self.position
-            last_pos = 0.1
-            reward += self.handle_pos(last_pos)
+            reward -= 0.2
             self.traded_log.loc[self.traded_log.index[self.t], 'deal_pos'] = last_pos
         else: 
             reward += self.handle_pos(pos)

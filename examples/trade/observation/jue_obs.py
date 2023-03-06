@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from gym.spaces import Discrete, Box, Tuple, MultiDiscrete
-from jue_data.data.feature_fn import timeseries_feature_fn
+from jue_data.data.feature_fn import timeseries_feature_fn, fix_len_timeseries_feature_fn
 
 class JueObs():
     def __init__(self, config) -> None:
@@ -54,3 +54,50 @@ class JueObs():
                 "enc_time":self.enc_time, 
                 "dec_data":dec_data[['change', 'amount', 'position', 'time_step']].values.copy(), 
                 "dec_time":self.dec_time, "index":index}
+
+
+class JueTSObs():
+    def __init__(self, config) -> None:
+        feature_size = config['feature_size']
+        self.ts_len = config['ts_len']
+        self._observation_space = Tuple(
+            (
+                Box(-np.inf, np.inf, shape=(feature_size,), dtype=np.float32),
+                Box(-np.inf, np.inf, shape=(4,), dtype=np.float32),
+                Discrete(2),
+            )
+        )
+    
+    def get_space(self):
+        return self._observation_space
+
+    def __call__(self, *args, **kargs):
+        return self.get_obs(*args, **kargs)
+
+    def get_obs(
+        self, sample, t, max_step, position, is_buy, *args, **kargs):
+        if t == 0:
+            fix_len_timeseries_feature_fn(sample, is_buy=is_buy, aug=True)
+
+            self.dec_data = sample['min_data_dec']
+            self.pred_start = sample['pred_start'] #241
+            self.t0_position = 1. if not is_buy else 0.
+
+            dec_self_pos = np.array([[self.t0_position, 0.]]).repeat(self.pred_start, axis=0)
+            dec_pred_pos = np.ones((362-self.pred_start, 2)) * 0.
+            self.sprivate_states_pos = np.concatenate([dec_self_pos, dec_pred_pos], axis=0)
+
+        index = t+self.pred_start
+        self.sprivate_states_pos[index] = [position, t/max_step]
+        self.dec_data[['position', 'time_step']] = self.sprivate_states_pos
+
+        dec_data = self.dec_data.iloc[index+1-241:index+1].copy()
+
+        # assert not (
+        #     np.isnan(list_private_state).any() | np.isinf(list_private_state).any()
+        # ), f"{private_state}, {target}"
+        # for k, p in self.public_state.items():
+        #     assert not (np.isnan(p).any() | np.isinf(p).any()), f"{p}"
+        return {
+                "dec_data":dec_data[['change', 'amount', 'position', 'time_step']].values.copy(), 
+                "index":index}

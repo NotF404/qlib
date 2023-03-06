@@ -48,7 +48,7 @@ def run(config):
     if config["task"] == "train":
         return executor.train(**config["optim"])
     elif config["task"] == "eval":
-        return executor.eval(config["test_paths"]["order_dir"], save_res=True, logdir=config["log_dir"] + "/test/",)
+        return executor.eval(save_res=True, logdir=config["log_dir"] + "/test/",)
     else:
         raise NotImplementedError
 

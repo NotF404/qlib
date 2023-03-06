@@ -63,11 +63,12 @@ class DFLogger(object):
                 for k, v in stat_cache.items():
                     summary[k + "_std"] = np.nanstd(v)
                     summary[k + "_mean"] = np.nanmean(v)
-                summary["GLR"] = GLR(stat_cache["PA"])
+                summary["GLR_PA"] = GLR(stat_cache["PA"])
+                summary["GLR_PR"] = GLR(stat_cache["PR"])
 
-                # json.dump(stat_cache, 
-                #         open(os.path.join(log_dir, f'infer_{datetime.now().isoformat()}.log'), 'w'), 
-                #         indent=2, cls=NpEncoder)
+                json.dump(stat_cache, 
+                        open(os.path.join(log_dir, f'infer_{datetime.now().isoformat()}.log'), 'w'), 
+                        indent=2, cls=NpEncoder)
                 queue.put(summary)
                 break
             elif len(info) == 0:
@@ -150,6 +151,9 @@ class InfoLogger(DFLogger):
                     summary[k + "_mean"] = np.nanmean(v)
                 summary["GLR"] = GLR(stat_cache["PA"])
                 queue.put(summary)
+                json.dump(stat_cache, 
+                        open(os.path.join(logdir, f'train_{datetime.now().isoformat()}.log'), 'w'), 
+                        indent=2, cls=NpEncoder)
                 stat_cache = {}
                 time.sleep(5)
                 continue
