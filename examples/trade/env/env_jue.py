@@ -61,10 +61,8 @@ class JueStockEnv(gym.Env):
         self.date = sample['meta_info']['datetime']
         # 去掉batch
         # close       avg  volume/100     amount/1000    change
-        if self.is_buy:
-            self.target_df = sample['next_day_min_data'].iloc[self.target_df_start: self.target_df_end]
-        else:
-            self.target_df = sample['min_dfs'][-1].iloc[self.target_df_start: self.target_df_end]
+
+        self.target_df = sample['min_dfs'][-1].iloc[self.target_df_start: self.target_df_end]
 
         self.sample = sample
 
@@ -121,13 +119,13 @@ class JueStockEnv(gym.Env):
         if self.t == self.max_step_num - 1:
             self.done = True
             if self.is_buy:
-                last_pos = 1.0 - self.position
+                pos = 1.0 - self.position
             else:
-                last_pos = self.position
-            reward -= 0.2
-            self.traded_log.loc[self.traded_log.index[self.t], 'deal_pos'] = last_pos
-        else: 
-            reward += self.handle_pos(pos)
+                pos = self.position
+            # reward -= 0.2
+            self.traded_log.loc[self.traded_log.index[self.t], 'deal_pos'] = pos
+        # else: 
+        reward += self.handle_pos(pos)
 
         if (self.position < ZERO and not self.is_buy) or (self.position >= 1.0 and self.is_buy):
             self.done = True
@@ -187,6 +185,8 @@ class JueStockEnv(gym.Env):
             return self.state, reward, self.done, {}
 
     def handle_pos(self, pos):
+        reward = 0.
+        if pos == 0.: return reward
         
         close = self.target_df.iloc[self.t].close
         if self.is_buy:
@@ -196,9 +196,9 @@ class JueStockEnv(gym.Env):
             performance_raise = (close / self.day_vwap - 1) * 10000
             PA_t = (close / self.day_twap - 1) * 10000
 
-        reward = - self.t * self.penalty_time
+        # reward = - self.t * self.penalty_time
+        # if pos == 0.: return reward - PA_t * 0.0001
 
-        if pos == 0.: return reward - PA_t * 0.0001
         if self.is_buy:
             self.position += pos
         else:

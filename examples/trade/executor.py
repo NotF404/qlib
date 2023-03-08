@@ -279,7 +279,7 @@ class Executor(BaseExecutor):
 
             torch.cuda.empty_cache()
             result = self.eval(
-                logdir=os.path.join(self.log_dir, "valid", str(iteration)) if log_valid else None,
+                logdir=self.log_dir
             )
             for k in result.keys():
                 self.writer.add_scalar("Valid/" + k, result[k], global_step=global_step)

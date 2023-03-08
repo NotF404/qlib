@@ -80,18 +80,17 @@ class JueTSObs():
             fix_len_timeseries_feature_fn(sample, is_buy=is_buy, aug=True)
 
             self.dec_data = sample['min_data_dec']
-            self.pred_start = sample['pred_start'] #241
+            self.pred_start = len(self.dec_data) - 120 if is_buy else len(self.dec_data) - 241
             self.t0_position = 1. if not is_buy else 0.
-
-            dec_self_pos = np.array([[self.t0_position, 0.]]).repeat(self.pred_start, axis=0)
-            dec_pred_pos = np.ones((362-self.pred_start, 2)) * 0.
-            self.sprivate_states_pos = np.concatenate([dec_self_pos, dec_pred_pos], axis=0)
+            self.dec_data['position'] = self.t0_position
+            self.dec_data['time_step'] = 0.
 
         index = t+self.pred_start
-        self.sprivate_states_pos[index] = [position, t/max_step]
-        self.dec_data[['position', 'time_step']] = self.sprivate_states_pos
+        df_index =  self.dec_data.index[index]
+        self.dec_data.loc[df_index, 'position'] = position
+        self.dec_data.loc[df_index, 'time_step'] = t/max_step
 
-        dec_data = self.dec_data.iloc[index+1-241:index+1].copy()
+        dec_data = self.dec_data.iloc[index+1-self.ts_len:index+1].copy()
 
         # assert not (
         #     np.isnan(list_private_state).any() | np.isinf(list_private_state).any()

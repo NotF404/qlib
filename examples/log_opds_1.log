@@ -1,39 +1,0 @@
-nohup: 忽略输入
-[45981:MainThread](2022-10-02 19:59:17,671) INFO - qlib.Initialization - [config.py:413] - default_conf: client.
-[45981:MainThread](2022-10-02 19:59:18,047) INFO - qlib.Initialization - [__init__.py:74] - qlib successfully initialized based on client settings.
-[45981:MainThread](2022-10-02 19:59:18,048) INFO - qlib.Initialization - [__init__.py:76] - data_path={'__DEFAULT_FREQ': PosixPath('/home/hy/.qlib/qlib_data/my_data')}
-12
-/mnt/data/quant/qlib/examples/log/example/OPDS_1/
-the best GPU is  0  with free memories of  24249 
-是否是完美信息:False
-CPU_COUNT: 24
-已经有cache的数据dcf73706dd05ce93e3c57571142ab1aa!!!!
-已经有cache的数据dcf73706dd05ce93e3c57571142ab1aa!!!!
-Epoch #1:   0%|          | 0/10 [00:00<?, ?it/s]Epoch #1:  10%|#         | 1/10 [03:03<27:35, 183.93s/it]Epoch #1:  20%|##        | 2/10 [06:12<24:55, 186.92s/it]Epoch #1:  30%|###       | 3/10 [09:48<23:18, 199.82s/it]Epoch #1:  40%|####      | 4/10 [13:43<21:22, 213.75s/it]Epoch #1:  50%|#####     | 5/10 [17:54<18:57, 227.46s/it]Epoch #1:  60%|######    | 6/10 [22:39<16:27, 246.96s/it]Epoch #1:  70%|#######   | 7/10 [27:50<13:23, 267.70s/it]Epoch #1:  80%|########  | 8/10 [33:04<09:25, 282.56s/it]Epoch #1:  90%|######### | 9/10 [38:25<04:54, 294.40s/it]Epoch #1: 100%|##########| 10/10 [44:10<00:00, 310.30s/it]Epoch #1: 100%|##########| 10/10 [44:10<00:00, 265.09s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
-
-finish evaluating on /mnt/data/quant/qlib/data/order/valid/
-Epoch #1: test_reward: -0.2586, best_reward: -0.2586 in #1
-Epoch #2:   0%|          | 0/10 [00:00<?, ?it/s]Epoch #2:  10%|#         | 1/10 [06:10<55:32, 370.31s/it]Epoch #2:  20%|##        | 2/10 [12:31<50:15, 376.97s/it]Epoch #2:  30%|###       | 3/10 [19:14<45:20, 388.70s/it]Epoch #2:  40%|####      | 4/10 [26:14<40:06, 401.06s/it]Epoch #2:  50%|#####     | 5/10 [33:40<34:46, 417.34s/it]Epoch #2:  60%|######    | 6/10 [41:16<28:40, 430.25s/it]Epoch #2:  70%|#######   | 7/10 [49:10<22:14, 444.82s/it]Epoch #2:  80%|########  | 8/10 [57:11<15:12, 456.10s/it]Epoch #2:  90%|######### | 9/10 [1:05:12<07:44, 464.02s/it]Epoch #2: 100%|##########| 10/10 [1:13:22<00:00, 471.95s/it]Epoch #2: 100%|##########| 10/10 [1:13:22<00:00, 440.23s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
-
-finish evaluating on /mnt/data/quant/qlib/data/order/valid/
-Epoch #2: test_reward: -0.5469, best_reward: -0.2586 in #1
-Epoch #3:   0%|          | 0/10 [00:00<?, ?it/s]Epoch #3:  10%|#         | 1/10 [08:11<1:13:47, 492.00s/it]Epoch #3:  20%|##        | 2/10 [16:27<1:05:54, 494.34s/it]Epoch #3:  30%|###       | 3/10 [24:54<58:19, 499.97s/it]  Epoch #3:  40%|####      | 4/10 [33:28<50:32, 505.37s/it]Epoch #3:  50%|#####     | 5/10 [42:10<42:37, 511.44s/it]Epoch #3:  60%|######    | 6/10 [51:03<34:34, 518.61s/it]Epoch #3:  70%|#######   | 7/10 [59:53<26:06, 522.33s/it]Epoch #3:  80%|########  | 8/10 [1:08:47<17:32, 526.21s/it]Epoch #3:  90%|######### | 9/10 [1:17:43<08:49, 529.13s/it]Epoch #3: 100%|##########| 10/10 [1:26:40<00:00, 531.55s/it]Epoch #3: 100%|##########| 10/10 [1:26:40<00:00, 520.00s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
-
-finish evaluating on /mnt/data/quant/qlib/data/order/valid/
-Epoch #3: test_reward: -0.5706, best_reward: -0.2586 in #1
-Epoch #4:   0%|          | 0/10 [00:00<?, ?it/s]Epoch #4:  10%|#         | 1/10 [09:07<1:22:03, 547.09s/it]Epoch #4:  20%|##        | 2/10 [18:16<1:13:09, 548.64s/it]Epoch #4:  30%|###       | 3/10 [27:37<1:04:38, 554.05s/it]Epoch #4:  40%|####      | 4/10 [36:54<55:32, 555.46s/it]  Epoch #4:  50%|#####     | 5/10 [46:25<46:44, 560.87s/it]Epoch #4:  60%|######    | 6/10 [55:59<37:41, 565.43s/it]Epoch #4:  70%|#######   | 7/10 [1:05:41<28:32, 570.77s/it]Epoch #4:  80%|########  | 8/10 [1:15:37<19:17, 578.73s/it]Epoch #4:  90%|######### | 9/10 [1:25:34<09:44, 584.60s/it]Epoch #4: 100%|##########| 10/10 [1:35:43<00:00, 592.18s/it]Epoch #4: 100%|##########| 10/10 [1:35:43<00:00, 574.39s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
-
-finish evaluating on /mnt/data/quant/qlib/data/order/valid/
-Epoch #4: test_reward: -0.5326, best_reward: -0.2586 in #1
-Epoch #5:   0%|          | 0/10 [00:00<?, ?it/s]Epoch #5:  10%|#         | 1/10 [10:03<1:30:31, 603.50s/it]Epoch #5:  20%|##        | 2/10 [20:10<1:20:46, 605.84s/it]Epoch #5:  30%|###       | 3/10 [30:18<1:10:46, 606.60s/it]Epoch #5:  40%|####      | 4/10 [40:30<1:00:51, 608.63s/it]Epoch #5:  50%|#####     | 5/10 [50:40<50:45, 609.08s/it]  Epoch #5:  60%|######    | 6/10 [1:00:52<40:41, 610.34s/it]Epoch #5:  70%|#######   | 7/10 [1:11:05<30:33, 611.24s/it]Epoch #5:  80%|########  | 8/10 [1:21:38<20:35, 617.88s/it]Epoch #5:  90%|######### | 9/10 [1:31:57<10:18, 618.47s/it]Epoch #5: 100%|##########| 10/10 [1:42:22<00:00, 620.29s/it]Epoch #5: 100%|##########| 10/10 [1:42:22<00:00, 614.22s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
-
-finish evaluating on /mnt/data/quant/qlib/data/order/valid/
-Epoch #5: test_reward: -0.5567, best_reward: -0.2586 in #1
-Epoch #6:   0%|          | 0/10 [00:00<?, ?it/s]Epoch #6:  10%|#         | 1/10 [10:25<1:33:48, 625.34s/it]Epoch #6:  20%|##        | 2/10 [21:18<1:25:31, 641.46s/it]Epoch #6:  30%|###       | 3/10 [32:12<1:15:31, 647.29s/it]Epoch #6:  40%|####      | 4/10 [43:05<1:04:57, 649.56s/it]Epoch #6:  50%|#####     | 5/10 [53:46<53:52, 646.56s/it]  Epoch #6:  60%|######    | 6/10 [1:04:30<43:02, 645.56s/it]Epoch #6:  70%|#######   | 7/10 [1:15:19<32:20, 646.75s/it]Epoch #6:  80%|########  | 8/10 [1:26:24<21:45, 652.58s/it]Epoch #6:  90%|######### | 9/10 [1:37:29<10:56, 656.38s/it]Epoch #6: 100%|##########| 10/10 [1:48:40<00:00, 660.98s/it]Epoch #6: 100%|##########| 10/10 [1:48:40<00:00, 652.05s/it]start evaluating on /mnt/data/quant/qlib/data/order/valid/
-
-finish evaluating on /mnt/data/quant/qlib/data/order/valid/
-Epoch #6: test_reward: -0.5496, best_reward: -0.2586 in #1
-Early stopped
-Testing...
-start evaluating on /mnt/data/quant/qlib/data/order/test/
-finish evaluating on /mnt/data/quant/qlib/data/order/test/

@@ -66,9 +66,17 @@ class DFLogger(object):
                 summary["GLR_PA"] = GLR(stat_cache["PA"])
                 summary["GLR_PR"] = GLR(stat_cache["PR"])
 
-                json.dump(stat_cache, 
-                        open(os.path.join(log_dir, f'infer_{datetime.now().isoformat()}.log'), 'w'), 
-                        indent=2, cls=NpEncoder)
+                # 写到文件
+                fn = os.path.join(log_dir, f'infer_metrics.csv')
+                if not os.path.exists(fn):
+                    with open(fn, 'a+') as f:
+                        header = list(summary.keys())
+                        f.write('\t'.join(header)+'\n')
+                with open(fn, 'a') as f:
+                    v = list(summary.values())
+                    v = map(lambda x: str(x), v)
+                    f.write('\t'.join(v)+'\n')    
+
                 queue.put(summary)
                 break
             elif len(info) == 0:
@@ -80,8 +88,8 @@ class DFLogger(object):
 
                 # print(os.path.join(log_dir, ins, str(date) + ".log"))
                 # if random.random() < 0.005:
-                os.makedirs(os.path.join(log_dir, ins), exist_ok=True)
-                plot_action(df, os.path.join(os.path.join(log_dir, ins, str(date) + ".png")))
+                os.makedirs(os.path.join(log_dir, 'valid', ins), exist_ok=True)
+                plot_action(df, os.path.join(os.path.join(log_dir, 'valid', ins, str(date) + ".png")))
                     # df.to_pickle(os.path.join(os.path.join(log_dir, ins, str(date) + ".pkl")))
                     # res.to_pickle(os.path.join(os.path.join(log_dir, ins, str(date) + ".log")))
                 del df
@@ -140,7 +148,8 @@ class InfoLogger(DFLogger):
         self.child = Process(target=self._worker, args=(self.queue,), daemon=True)
         self.child.start()
 
-    def _worker(logdir, queue):
+    @staticmethod
+    def _worker(queue):
         stat_cache = {}
         while True:
             info = queue.get(block=True)
@@ -151,9 +160,6 @@ class InfoLogger(DFLogger):
                     summary[k + "_mean"] = np.nanmean(v)
                 summary["GLR"] = GLR(stat_cache["PA"])
                 queue.put(summary)
-                json.dump(stat_cache, 
-                        open(os.path.join(logdir, f'train_{datetime.now().isoformat()}.log'), 'w'), 
-                        indent=2, cls=NpEncoder)
                 stat_cache = {}
                 time.sleep(5)
                 continue
@@ -210,7 +216,7 @@ def plot_action(df, path, title=''):
     df.plot(x='time', y='change', figsize=(12,4), color='orange', ax=ax1, title=title)
     ax2 = ax1.twinx() 
 
-    df.plot.scatter(x='time', y='action', figsize=(12,4), ylim=[-0.1, 0.5], ax=ax2)
+    df.plot.scatter(x='time', y='action', figsize=(12,4), ylim=[-0.1, 1.1], ax=ax2)
     
     plt.savefig(path)
     plt.close()
