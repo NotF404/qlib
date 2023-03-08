@@ -208,16 +208,13 @@ class InfoLogger(DFLogger):
 
 
 def plot_action(df, path, title=''):
-    df['action'] = df['deal_pos']
     df['time'] = df.index.strftime('%H%M')
-    df['reward'] = df['reward'] * 0.1
+    # df['reward'] = df['reward'] * 0.01
 
-    ax1 = df.plot(x='time', y='reward', figsize=(12,4), color='red')
-    df.plot(x='time', y='change', figsize=(12,4), color='orange', ax=ax1, title=title)
-    ax2 = ax1.twinx() 
+    fig_action = df.plot(x='time', y=['reward', 'change'], figsize=(8,4), 
+                subplots=True, kind='line', title=title)
+    ax2 = fig_action[1].twinx() 
+    df.plot.scatter(x='time', y='deal_pos', figsize=(8,4), ylim=[-0.1, 1.1], ax=ax2)
+    fig_action[0].figure.savefig(path)
 
-    df.plot.scatter(x='time', y='action', figsize=(12,4), ylim=[-0.1, 1.1], ax=ax2)
-    
-    plt.savefig(path)
-    plt.close()
 

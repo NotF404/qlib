@@ -85,12 +85,12 @@ class JueTSObs():
             self.dec_data['position'] = self.t0_position
             self.dec_data['time_step'] = 0.
 
-        index = t+self.pred_start
-        df_index =  self.dec_data.index[index]
+        self.index = t+self.pred_start
+        df_index =  self.dec_data.index[self.index]
         self.dec_data.loc[df_index, 'position'] = position
         self.dec_data.loc[df_index, 'time_step'] = t/max_step
 
-        dec_data = self.dec_data.iloc[index+1-self.ts_len:index+1].copy()
+        dec_data = self.dec_data.iloc[self.index+1-self.ts_len:self.index+1].copy()
 
         # assert not (
         #     np.isnan(list_private_state).any() | np.isinf(list_private_state).any()
@@ -99,4 +99,11 @@ class JueTSObs():
         #     assert not (np.isnan(p).any() | np.isinf(p).any()), f"{p}"
         return {
                 "dec_data":dec_data[['change', 'amount', 'position', 'time_step']].values.copy(), 
-                "index":index}
+                "index":self.index}
+
+    def render_obs(self):
+        d = self.dec_data.iloc[self.index+1-self.ts_len:self.index+1]
+        d['time'] = d.index.strftime('%H%M')
+        print(d.describe())
+        fig = d.plot(x='time', y=['change', 'amount', 'position', 'time_step'], subplots=True, kind='line', title=f"{self.index}_{d.index[-1]}")
+        return fig

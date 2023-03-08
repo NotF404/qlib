@@ -1,3 +1,4 @@
+import os
 import gym
 
 gym.logger.set_level(40)
@@ -132,6 +133,7 @@ class JueStockEnv(gym.Env):
 
         self.traded_log.loc[self.traded_log.index[self.t], 'reward'] = reward
 
+        self.t += 1
         if self.done:
             this_vwap = (self.traded_log['close'] * self.traded_log['deal_pos']).sum()
             # 卖出的平均价格/天平均价格， 不加权的计算方法
@@ -174,7 +176,6 @@ class JueStockEnv(gym.Env):
             return self.state, reward, self.done, info
 
         else:
-            self.t += 1
             self.state = self.obs(
                 self.sample, 
                 self.t, 
@@ -220,10 +221,18 @@ class JueStockEnv(gym.Env):
                 'day_amp',self.day_amp)
         print('reward_log_dict:\n', self.reward_log_dict)
 
-    def render(self, mode='human'):
-        if not self.log: return
-        # if self.background is None:
-        self.traded_log['time'] = self.traded_log.index.strftime('%d%H%M')
-        self.background = self.traded_log.plot(x='time', y='change', figsize=(20,4), ylim=[-0.12, 0.12])
-        ax2 = self.background.twinx() 
-        self.traded_log.plot(x='time', y=self.state['dec_data'][:,-2], color='orange', ax=ax2, title=f"{self.t}")
+    def render(self, mode='human', path='.'):
+        # import matplotlib.pyplot as plt
+        df = self.traded_log
+        df['time'] = df.index.strftime('%H%M')
+        # df['reward'] = df['reward'] * 0.01
+
+        if self.t != 0: 
+            fig_action = df.plot(x='time', y=['reward', 'change'], figsize=(8,4), 
+                        subplots=True, kind='line', title=f"{self.t-1}_{df.index[self.t-1]}")
+            ax2 = fig_action[1].twinx() 
+            df.plot.scatter(x='time', y='deal_pos', figsize=(8,4), ylim=[-0.1, 1.1], ax=ax2)
+            fig_action[0].figure.savefig(os.path.join(path, f'action_{self.t-1}.png'))
+        fig_obs = self.obs.render_obs()
+        # for i, ax in enumerate(fig_obs):
+        fig_obs[0].figure.savefig(os.path.join(path, f'obs_{self.t}.png'))

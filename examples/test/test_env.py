@@ -1,12 +1,13 @@
 
 import sys
 import os
+import shutil
 from matplotlib import pyplot as plt
 import numpy as np
 sys.path.append('/mnt/data/quant/qlib/examples/')
 from trade.env.env_jue import JueStockEnv
 import yaml
-config_path = "/mnt/data/quant/qlib/examples/trade/exp/example/OPDS/config_jue.yml"
+config_path = "/mnt/data/quant/qlib/examples/trade/exp/example/OPDS/config_jue_ts_buy.yml"
 with open(config_path, "r") as f:
     c = yaml.load(f)
 print(c)
@@ -20,27 +21,21 @@ env = JueStockEnv(c['env_conf'])
     # print(_, samp.index[_])
 sample = samp.sample()
 # print(sample)
-def plot_action(df, path, title=''):
-    df['action'] = df['deal_pos']
-    df['time'] = df.index.strftime('%H%M')
-    df['reward'] = df['reward'] * 0.1
-
-    ax1 = df.plot(x='time', y='reward', figsize=(12,4), color='red')
-    df.plot(x='time', y='change', figsize=(12,4), color='orange', ax=ax1, title=title)
-    ax2 = ax1.twinx() 
-
-    df.plot.scatter(x='time', y='action', figsize=(12,4), ylim=[-0.1, 0.5], ax=ax2)
-    
-
-    plt.savefig(path)
-    plt.close()
     
 a0 = env.reset(samp.sample())
+
+tmp = '/mnt/data/quant/qlib/examples/test/tmp'
+if os.path.exists(tmp):
+    shutil.rmtree(tmp)
+
+os.makedirs(tmp, exist_ok=True)
+env.render(path=tmp)
 while not env.done:
     a = env.action_space.sample()
-    a = np.random.choice([1]*20 + [0,2])
+    a = np.random.choice([2]*2000 + [0, 1,3,4])
     print(a)
     a1 = env.step(a)
+    env.render(path=tmp)
     # print(a1[0])
-    print(a1[1:])
-plot_action(env.traded_log, 'b.png')
+    # print(a1[1:])
+# plot_action(env.traded_log, 'b.png')

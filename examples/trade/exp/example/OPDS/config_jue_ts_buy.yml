@@ -43,7 +43,7 @@ env_conf:
   name: JueStockEnv
   is_buy: true
   target_df_start: 121
-  target_df_end: 241
+  target_df_end: 235
   obs:
     name: JueTSObs
     config: {
