@@ -22,7 +22,7 @@ env = JueStockEnv(c['env_conf'])
 sample = samp.sample()
 # print(sample)
     
-a0 = env.reset(samp.sample())
+state = env.reset(samp.sample())
 
 tmp = '/mnt/data/quant/qlib/examples/test/tmp'
 if os.path.exists(tmp):
@@ -31,10 +31,11 @@ if os.path.exists(tmp):
 os.makedirs(tmp, exist_ok=True)
 env.render(path=tmp)
 while not env.done:
-    a = env.action_space.sample()
-    a = np.random.choice([2]*100 + [0, 1,3,4])
+    # a = env.action_space.sample()
+    # a = np.random.choice([2]*100 + [0, 1,3,4])
+    a = state['human_action']
     print(a)
-    a1 = env.step(a)
+    state, reward, done, info = env.step(a)
     env.render(path=tmp)
     # print(a1[0])
     # print(a1[1:])

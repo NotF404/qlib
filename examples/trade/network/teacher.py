@@ -21,8 +21,10 @@ class Teacher_Extractor(nn.Module):
         self.raw_fc = nn.Sequential(nn.Linear(64, 64), nn.ReLU(),)
 
         self.fc = nn.Sequential(
-            nn.Linear(hidden_size * 2, hidden_size), nn.ReLU(), nn.Linear(hidden_size, 128), nn.ReLU(),
+            nn.Linear(hidden_size * 2, hidden_size), nn.ReLU(), nn.Linear(hidden_size, 128), nn.LayerNorm(128),
         )
+
+    # def _init_weights(self):
 
     def _to_device(self, data):
         return torch.from_numpy(data).float().to(self.device)
@@ -43,8 +45,8 @@ class Teacher_Extractor(nn.Module):
         rnn2_out = rnn2_out[:, -1]
         # dnn_out = self.dnn(dnn_in)
         fc_in = torch.cat((rnn_out, rnn2_out), dim=-1)
-        self.feature = self.fc(fc_in)
-        return self.feature
+        feature = self.fc(fc_in)
+        return feature
 
 
 class Teacher_Actor(nn.Module):

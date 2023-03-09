@@ -1,7 +1,7 @@
 seed: 42
 task: train
 policy_path: null
-log_dir: /mnt/data/quant/qlib/examples/log/example/OPDS_buy_3
+log_dir: /mnt/data/quant/qlib/examples/log/example/OPDS_buy_4
 buffer_size: 80000
 io_conf:
   test_sampler: 
@@ -94,7 +94,7 @@ optim:
   batch_size: 128
   max_epoch: 30
   step_per_epoch: 2
-  collect_per_step: 40000
+  collect_per_step: 100
   repeat_per_collect: 2
   early_stopping: 15
   weight_decay: 0.0001

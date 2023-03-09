@@ -260,6 +260,7 @@ class Executor(BaseExecutor):
         stat = {}
         for epoch in range(1, 1 + max_epoch):
             with tqdm.tqdm(total=step_per_epoch, desc=f"Epoch #{epoch}", **tqdm_config) as t:
+                self.epoch = epoch
                 while t.n < t.total:
                     torch.cuda.empty_cache()
                     result, losses = self.train_round(repeat_per_collect, collect_per_step, batch_size, iteration)
@@ -321,7 +322,8 @@ class Executor(BaseExecutor):
             self.train_collector.reset()
         torch.cuda.empty_cache()
         print('start training collect:\n')
-        result = self.train_collector.collect(n_episode=collect_per_step, log_fn=self.train_logger)
+        explore_method = 2 if self.epoch<3 else 3
+        result = self.train_collector.collect(n_episode=collect_per_step, log_fn=self.train_logger, method=explore_method)
         torch.cuda.empty_cache()
         print('finish collect:\n', result)
         result = merge_dicts(result, self.train_logger.summary())
@@ -348,7 +350,7 @@ class Executor(BaseExecutor):
             eval_logger.reset()
         else:
             eval_logger = self.train_logger
-        result = self.test_collector.collect(log_fn=eval_logger)
+        result = self.test_collector.collect(log_fn=eval_logger, method=1)
         result = merge_dicts(result, eval_logger.summary())
         if save_res:
             with open(os.path.join(self.log_dir, f"res_{datetime.now().isoformat()}.json"), "w") as f:

@@ -79,6 +79,8 @@ class JueStockEnv(gym.Env):
             self.position,
             self.is_buy,
         )
+        self.generate_human_actions()
+
         self.traded_log = self.target_df.copy(deep=True)
         self.traded_log['deal_pos'] = 0.
         self.traded_log['reward'] = 0.
@@ -94,12 +96,8 @@ class JueStockEnv(gym.Env):
             print(self.day_vwap)
 
         self.done = False
+        self.state.update({'human_action': self.get_human_action()})
 
-        self.this_cash = 0
-
-        self.total_reward = 0
-        self.total_instant_rew = 0
-        self.last_rew = 0
         return self.state
 
     def step(self, action):
@@ -173,6 +171,7 @@ class JueStockEnv(gym.Env):
                 info["df"] = self.traded_log
                 info['ins'] = self.ins
             del self.sample
+            self.state.update({'human_action': 0})
             return self.state, reward, self.done, info
 
         else:
@@ -183,6 +182,7 @@ class JueStockEnv(gym.Env):
                 self.position, 
                 self.is_buy
             )
+            self.state.update({'human_action': self.get_human_action()})
             return self.state, reward, self.done, {}
 
     def handle_pos(self, pos):
@@ -238,3 +238,19 @@ class JueStockEnv(gym.Env):
         fig_obs = self.obs.render_obs()
         # for i, ax in enumerate(fig_obs):
         fig_obs[0].figure.savefig(os.path.join(path, f'obs_{self.t}.png'))
+
+    def generate_human_actions(self):
+        if not self.is_buy:
+            line1_10 = sorted(list(self.target_df.close), reverse=True)[8]
+            mask = self.target_df.close>line1_10
+        else:
+            line1_10 = sorted(list(self.target_df.close), reverse=False)[8]
+            mask = self.target_df.close<line1_10     
+
+        h_action = np.ones(self.max_step_num) * 2
+        h_action[mask] = [self.action_space.sample() for _ in range(mask.sum())]
+
+        self.target_df['human_action'] = h_action # 不操作的类别
+
+    def get_human_action(self):
+        return int(self.target_df.iloc[self.t].human_action)

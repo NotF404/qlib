@@ -115,7 +115,7 @@ class Collector(object):
         self,
         n_step: Optional[int] = None,
         n_episode: Optional[Union[int, List[int]]] = None,
-        random: bool = False,
+        method: int = 3,
         render: Optional[float] = None,
         log_fn=None,
         no_grad: bool = True,
@@ -218,15 +218,7 @@ class Collector(object):
 
             # calculate the next action
             start = time.time()
-            if random:
-                spaces = self._action_space
-                result = Batch(act=[spaces[i].sample() for i in self._ready_env_ids])
-            else:
-                if no_grad:
-                    with torch.no_grad():  # faster than retain_grad version
-                        result = self.policy(self.data, last_state)
-                else:
-                    result = self.policy(self.data, last_state)
+            result = self.explore_strategy(method)
             model_time += time.time() - start
             state = result.get("state", Batch())
             # convert None to Batch(), since None is reserved for 0-init
@@ -355,3 +347,28 @@ class Collector(object):
             "rew_std": np.std(rewards),
             "len": step_count / episode_count,
         }
+
+    def explore_strategy(self, method=0):
+        """
+        0: random, 随机sample action space
+        1: policy决定
+        2: human决定
+        3: 通过policy的概率重新sample
+        """
+        if method == 0:
+            spaces = self._action_space
+            result = Batch(act=[spaces[i].sample() for i in self._ready_env_ids])
+        elif method == 1:
+            with torch.no_grad():  # faster than retain_grad version
+                result = self.policy(self.data, None)
+        elif method == 2:
+            result = Batch(act=list(self.data.obs['human_action']))
+        elif method == 3:
+            with torch.no_grad():
+                logits, h = self.actor(self.data.obs, state=None, info={})
+                logits = logits.pow(3)
+                dist = self.policy.dist_fn(logits)
+                act = dist.sample()
+            result = Batch(act=act)
+        return result
+            
