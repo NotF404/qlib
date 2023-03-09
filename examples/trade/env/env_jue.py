@@ -42,7 +42,7 @@ class JueStockEnv(gym.Env):
         self.observation_space = self.obs.get_space()
         self.action_space = self.action_func.get_space()
         self.target_money = 5000000
-        self.penalty_time = 0.01 / 120 / 120 # 所有step的惩罚加起来在0.5%
+        self.penalty_time = 0.1 / 120 / 120 # 所有step的惩罚加起来在0.5%
 
     def toggle_log(self, log):
         self.log = log
@@ -187,6 +187,8 @@ class JueStockEnv(gym.Env):
 
     def handle_pos(self, pos):
         reward = 0.
+        reward = - self.t * self.penalty_time
+
         if pos == 0.: return reward
         
         close = self.target_df.iloc[self.t].close

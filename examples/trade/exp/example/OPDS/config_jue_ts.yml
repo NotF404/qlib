@@ -1,7 +1,7 @@
 seed: 42
 task: train
 policy_path: null
-log_dir: /mnt/data/quant/qlib/examples/log/example/OPDS_sell_2
+log_dir: /mnt/data/quant/qlib/examples/log/example/OPDS_sell_3
 buffer_size: 80000
 io_conf:
   test_sampler: 

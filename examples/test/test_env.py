@@ -32,7 +32,7 @@ os.makedirs(tmp, exist_ok=True)
 env.render(path=tmp)
 while not env.done:
     a = env.action_space.sample()
-    a = np.random.choice([2]*2000 + [0, 1,3,4])
+    a = np.random.choice([2]*100 + [0, 1,3,4])
     print(a)
     a1 = env.step(a)
     env.render(path=tmp)
