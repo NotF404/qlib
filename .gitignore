@@ -35,3 +35,6 @@ tags
 
 .pytest_cache/
 .vscode/
+benchmarks
+test
+tools

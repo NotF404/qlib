@@ -1,0 +1,100 @@
+seed: 42
+task: train
+policy_path: null
+log_dir: /mnt/data/quant/qlib/examples/log/example/OPDS_buy_6
+buffer_size: 80000
+io_conf:
+  test_sampler: 
+    name: Sampler
+    config:
+      train_start_date: "20180918"
+      train_end_date: "20221101"
+      valid_start_date: "20221110"
+      valid_end_date: "20221215"
+      test_start_date: "20221110"
+      test_end_date: "20221215"
+      instruments: "all_2018"
+      day_cache_dir: /mnt/data/quant/qlib/data/day_data_cache_dir
+      min_data_dir: "/mnt/stockdata/eastmoney_min_data/"
+      n_days: 3
+      is_train: False
+      is_realtime: false
+  train_sampler: 
+    name: Sampler
+    config:
+      train_start_date: "20180918"
+      train_end_date: "20221101"
+      valid_start_date: "20221110"
+      valid_end_date: "20221215"
+      test_start_date: "20221110"
+      test_end_date: "20221215"
+      instruments: "all_2018"
+      day_cache_dir: '/mnt/data/quant/qlib/data/day_data_cache_dir'
+      min_data_dir: "/mnt/stockdata/eastmoney_min_data/"
+      n_days: 3
+      is_train: True
+      is_realtime: false
+  test_logger: DFLogger
+resources:
+  num_cpus: 12
+  num_gpus: 1
+  device: cuda
+env_conf:
+  name: JueStockEnv
+  is_buy: true
+  target_df_start: 121
+  target_df_end: 235
+  obs:
+    name: JueTSObs
+    config: {
+      feature_size: 6,
+      ts_len: 241,
+      perfect_info: false
+    }
+  action:
+    name: Static_Action
+    config:
+      action_num: 5
+      action_map: [1.0, 0.75, 0.5, 0., 0.25]
+      is_buy: true
+  reward:
+    VP_Penalty_small_vec:
+      penalty: 100
+      coefficient: 1
+policy_conf:
+  name: PPO
+  config:
+    discount_factor: 1.
+    max_grad_norm: 100.
+    reward_normalization: False
+    eps_clip: 0.3
+    value_clip: True
+    vf_coef: 1.
+    gae_lambda: 1.
+    vf_clip_para: 0.3
+network_conf:
+  name: Teacher
+  extractor:
+    name: Teacher_Extractor
+    config:
+      hidden_size: 64
+  actor:
+    name: Teacher_Actor
+    config: 
+      out_shape: 5
+      in_shape: 128
+  critic:
+    name: Teacher_Critic
+    config:
+      out_shape: 1
+      in_shape: 128
+
+optim:
+  lr: 5e-4
+  batch_size: 128
+  max_epoch: 30
+  step_per_epoch: 2
+  collect_per_step: 10000
+  repeat_per_collect: 2
+  early_stopping: 15
+  weight_decay: 0.0001
